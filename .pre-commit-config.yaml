@@ -1,0 +1,70 @@
+default_install_hook_types: [pre-commit, commit-msg]
+
+repos:
+  - repo: local
+    hooks:
+      - id: check-branch-name
+        name: Check branch naming convention
+        entry: .venv/bin/python scripts/pre_commit_hooks.py check-branch
+        language: system
+        pass_filenames: false
+        stages: [pre-commit]
+
+      - id: trailing-whitespace
+        name: Trim trailing whitespace
+        entry: .venv/bin/python scripts/pre_commit_hooks.py trailing-whitespace
+        language: system
+        types: [text]
+        exclude: '^(\.agents/|references/)'
+
+      - id: end-of-file-fixer
+        name: Ensure end-of-file newline
+        entry: .venv/bin/python scripts/pre_commit_hooks.py end-of-file-fixer
+        language: system
+        types: [text]
+        exclude: '^(\.agents/|references/)'
+
+      - id: check-yaml
+        name: Validate YAML
+        entry: .venv/bin/python scripts/pre_commit_hooks.py check-yaml
+        language: system
+        types: [yaml]
+        exclude: '^(\.agents/|references/)'
+
+      - id: check-toml
+        name: Validate TOML
+        entry: .venv/bin/python scripts/pre_commit_hooks.py check-toml
+        language: system
+        types: [toml]
+
+      - id: ruff
+        name: Ruff linter
+        entry: .venv/bin/ruff check --fix --force-exclude
+        language: system
+        types: [python]
+
+      - id: ruff-format
+        name: Ruff formatter
+        entry: .venv/bin/ruff format --force-exclude
+        language: system
+        types: [python]
+
+      - id: mypy
+        name: Mypy static type checker
+        entry: .venv/bin/mypy
+        language: system
+        types: [python]
+        pass_filenames: false
+        args: ["src", "tests"]
+
+      - id: gitleaks
+        name: Gitleaks secret scanner
+        entry: gitleaks protect -v --staged
+        language: system
+        pass_filenames: false
+
+      - id: commitizen
+        name: Commitizen Conventional Commit Check
+        entry: .venv/bin/cz check --commit-msg-file
+        language: system
+        stages: [commit-msg]
