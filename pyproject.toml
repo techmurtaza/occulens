@@ -55,6 +55,9 @@ select = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
+"src/occulens/detectors/secret_detector.py" = [
+    "S105",  # Detector defines regex patterns matching secret keywords
+]
 "tests/*" = [
     "S101",  # assert allowed in tests
     "S105",  # hardcoded password strings in test cases
