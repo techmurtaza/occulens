@@ -39,6 +39,7 @@ env/
 htmlcov/
 nosetests.xml
 coverage.xml
+ci-results/
 *.cover
 *.py,cover
 .hypothesis/

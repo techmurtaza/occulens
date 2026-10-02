@@ -38,7 +38,7 @@ jobs:
           python -m venv .venv
           .venv/bin/python -m pip install --upgrade pip
           make install
-          .venv/bin/python -m spacy download en_core_web_sm
+          .venv/bin/python -m spacy download en_core_web_md
 
       - name: Lint
         run: make lint

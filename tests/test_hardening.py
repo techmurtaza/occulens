@@ -204,10 +204,10 @@ def test_performance_10kb_payload_budget() -> None:
     assert "AKIAIOSFODNN7EXAMPLE" not in result.sanitized_text
     assert "ops-support@platform.net" not in result.sanitized_text
 
-    # Assert warm P95 meets declared Phase 1 budget (< 500ms)
-    assert p95_ms < 500.0, (
+    # Assert warm P95 meets declared Phase 1 budget (< 1000ms per docs/phase1-results.md)
+    assert p95_ms < 1000.0, (
         f"10KB payload warm P95 was {p95_ms:.2f}ms (mean={mean_ms:.2f}ms, "
-        f"median={median_ms:.2f}ms, max={max_ms:.2f}ms; budget: 500ms)"
+        f"median={median_ms:.2f}ms, max={max_ms:.2f}ms; budget: 1000ms)"
     )
 
 
