@@ -16,6 +16,27 @@ Explicit Non-Responsibilities:
     - Does NOT compute policy rules or precedence (handled by policy/ module).
     - Does NOT perform string replacements (handled by transform/ module).
     - Does NOT handle HTTP or CLI transport (handled by adapters/ module).
+
+Example Usage:
+    >>> from occulens.domain import DetectedEntity, EntityType, PrivacyAction, PrivacyDecision
+    >>> entity = DetectedEntity(
+    ...     entity_type=EntityType.PERSON,
+    ...     value="Alice",
+    ...     start=0,
+    ...     end=5,
+    ...     confidence=0.95,
+    ...     source="spacy",
+    ... )
+    >>> decision = PrivacyDecision(
+    ...     entity=entity,
+    ...     action=PrivacyAction.TOKENIZE,
+    ...     replacement="PERSON_A",
+    ...     reason="default tokenize policy for person",
+    ... )
+
+Architecture Decision Records:
+    - ADR-002: Dependencies point toward domain.
+    - ADR-006: Diagnostic representations strictly suppress raw secrets and PII.
 """
 
 from occulens.domain.models import (

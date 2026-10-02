@@ -77,7 +77,8 @@ def _filter_non_overlapping_decisions(
 
     # Sort candidates by action severity descending, confidence descending,
     # span length descending, and earlier start offset.
-    def priority_key(d: PrivacyDecision) -> tuple[int, float, int, int]:
+    def _priority_key(d: PrivacyDecision) -> tuple[int, float, int, int]:
+        """Compute sort priority tuple based on action severity and entity span."""
         span_len = d.entity.end - d.entity.start
         return (
             _ACTION_SEVERITY[d.action],
@@ -86,7 +87,7 @@ def _filter_non_overlapping_decisions(
             -d.entity.start,
         )
 
-    sorted_by_priority = sorted(decisions, key=priority_key, reverse=True)
+    sorted_by_priority = sorted(decisions, key=_priority_key, reverse=True)
     selected: list[PrivacyDecision] = []
 
     for cand in sorted_by_priority:

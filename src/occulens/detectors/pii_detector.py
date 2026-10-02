@@ -131,7 +131,8 @@ def _arbitrate_and_deduplicate(candidates: list[DetectedEntity]) -> list[Detecte
     if not candidates:
         return []
 
-    def priority_key(entity: DetectedEntity) -> tuple[float, int, int, int]:
+    def _priority_key(entity: DetectedEntity) -> tuple[float, int, int, int]:
+        """Compute sort priority tuple for interval arbitration."""
         is_structured_pii = entity.entity_type in _STRUCTURED_PII_TYPES and entity.source in (
             "presidio",
             "regex",
@@ -142,7 +143,7 @@ def _arbitrate_and_deduplicate(candidates: list[DetectedEntity]) -> list[Detecte
         span_len = entity.end - entity.start
         return (entity.confidence, is_preferred_source, span_len, -entity.start)
 
-    sorted_candidates = sorted(candidates, key=priority_key, reverse=True)
+    sorted_candidates = sorted(candidates, key=_priority_key, reverse=True)
     selected: list[DetectedEntity] = []
 
     for cand in sorted_candidates:

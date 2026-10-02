@@ -27,6 +27,12 @@ def main() -> int:
         action="store_true",
         help="Output raw JSON report instead of markdown table",
     )
+    parser.add_argument(
+        "--output",
+        type=str,
+        default=None,
+        help="Optional file path to write JSON evaluation report",
+    )
     args = parser.parse_args()
 
     fixture_path = Path(args.fixtures)
@@ -36,6 +42,11 @@ def main() -> int:
 
     cases = load_cases_from_json(fixture_path)
     report = evaluate(cases)
+
+    if args.output:
+        out_path = Path(args.output)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        out_path.write_text(report.to_json(), encoding="utf-8")
 
     if args.json:
         print(report.to_json())
