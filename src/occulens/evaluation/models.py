@@ -77,6 +77,7 @@ class EvaluationReport:
     avg_processing_ms: float
     p95_processing_ms: float
     case_results: tuple[CaseResult, ...] = ()
+    applicable_utility_cases: int = 0
 
     def __post_init__(self) -> None:
         """Freeze dictionary mappings."""
@@ -95,6 +96,7 @@ class EvaluationReport:
             "entities_detected": self.entities_detected,
             "entities_by_type": dict(self.entities_by_type),
             "actions_by_type": dict(self.actions_by_type),
+            "applicable_utility_cases": self.applicable_utility_cases,
             "required_info_retained": self.required_info_retained,
             "incorrect_removals": self.incorrect_removals,
             "avg_processing_ms": self.avg_processing_ms,
@@ -136,6 +138,7 @@ class EvaluationReport:
             f"| **Secret Leaks** | {self.secret_leaks} |",
             f"| **PII Leaks** | {self.pii_leaks} |",
             f"| **Entities Detected** | {self.entities_detected} |",
+            f"| **Applicable Utility Cases** | {self.applicable_utility_cases} |",
             f"| **Required Info Retained** | {self.required_info_retained} |",
             f"| **Incorrect Removals** | {self.incorrect_removals} |",
             f"| **Average Latency** | {self.avg_processing_ms:.2f} ms |",

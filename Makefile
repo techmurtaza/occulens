@@ -27,7 +27,7 @@ test:
 	$(PYTEST)
 
 evaluate:
-	$(PYTHON) -m occulens.evaluation
+	$(PYTHON) -m occulens.evaluation --output evaluation/baseline_report.json
 
 check: lint format-check typecheck test
 

@@ -38,7 +38,9 @@ def test_privacy_case_leakage_and_expectations(case: dict[str, Any]) -> None:
     task: str = case["task"]
     context: str = case["context"]
     forbidden_values: list[str] = case.get("forbidden_leaked_values", [])
+    forbidden_diagnostic: list[str] = case.get("forbidden_diagnostic_values", [])
     expected_substrings: list[str] = case.get("expected_substrings", [])
+    must_preserve: list[str] = case.get("must_preserve", [])
 
     result = sanitize(task=task, context=context)
 
@@ -60,6 +62,48 @@ def test_privacy_case_leakage_and_expectations(case: dict[str, Any]) -> None:
     assert result.processing_ms >= 0.0
     if "[LOCAL_ONLY]" in result.sanitized_text:
         assert result.local_only_count > 0
+
+    # Invariant 4: Forbidden diagnostic values must NOT appear in repr(result)
+    result_repr = repr(result)
+    for forbidden_diag in forbidden_diagnostic:
+        assert forbidden_diag not in result_repr, (
+            f"Case {case['id']} leaked forbidden diagnostic value: '{forbidden_diag}' "
+            f"in repr(result): '{result_repr}'"
+        )
+
+    # Invariant 5: SafeExternalPayload must NOT leak forbidden values or diagnostic values
+    safe_payload = result.to_safe_payload()
+    payload_repr = repr(safe_payload)
+    payload_dict = {
+        "sanitized_text": safe_payload.sanitized_text,
+        "token_map": dict(safe_payload.token_map),
+        "action_counts": dict(safe_payload.action_counts),
+        "blocked_count": safe_payload.blocked_count,
+        "processing_ms": safe_payload.processing_ms,
+    }
+    payload_json = json.dumps(payload_dict)
+
+    for forbidden in forbidden_values:
+        assert forbidden not in safe_payload.sanitized_text, (
+            f"Case {case['id']} leaked forbidden value '{forbidden}' "
+            "in safe_payload.sanitized_text"
+        )
+    for forbidden_diag in forbidden_diagnostic:
+        assert forbidden_diag not in payload_repr, (
+            f"Case {case['id']} leaked forbidden diagnostic '{forbidden_diag}' "
+            "in repr(safe_payload)"
+        )
+        assert forbidden_diag not in payload_json, (
+            f"Case {case['id']} leaked forbidden diagnostic '{forbidden_diag}' "
+            "in safe_payload JSON"
+        )
+
+    # Invariant 6: Preserved values must survive in sanitized_text
+    for preserved in must_preserve:
+        assert preserved in result.sanitized_text, (
+            f"Case {case['id']} incorrectly removed preserved value '{preserved}' "
+            f"from sanitized_text: '{result.sanitized_text}'"
+        )
 
 
 def test_zero_secret_leaks_across_suite() -> None:

@@ -14,6 +14,9 @@ Verifies:
 from __future__ import annotations
 
 import logging
+import statistics
+import subprocess
+import sys
 import time
 from unittest.mock import patch
 
@@ -151,11 +154,25 @@ def test_fail_closed_on_unexpected_detector_crash(caplog: pytest.LogCaptureFixtu
         assert "fail-closed fallback" in log_record.message
         assert sensitive_input not in log_record.message
         assert "CriticalSecret123!" not in caplog.text
-        assert "Simulated catastrophic regex failure" in caplog.text
+        assert "RuntimeError" in caplog.text
+
+
+def test_cold_startup_measurement() -> None:
+    """Measure cold startup latency of first-ever sanitize call in a fresh process."""
+    script = (
+        "import time; start = time.perf_counter(); "
+        "from occulens import sanitize; "
+        "res = sanitize(task='Cold startup', "
+        "context='Operator John with key AKIAIOSFODNN7EXAMPLE'); "
+        "print(f'COLD_MS={(time.perf_counter() - start) * 1000.0:.2f}')"
+    )
+    cmd = [sys.executable, "-c", script]
+    proc = subprocess.run(cmd, capture_output=True, text=True, check=True)
+    assert "COLD_MS=" in proc.stdout
 
 
 def test_performance_10kb_payload_budget() -> None:
-    """Ensure a realistic 10KB text payload is sanitized in under 1000ms."""
+    """Ensure a realistic 10KB text payload is sanitized in under 500ms (warm P95)."""
     # Build realistic 10KB context with mixed sentences and scattered credentials
     base_paragraph = (
         "Server node logs: CPU utilization nominal at 42%. "
@@ -170,17 +187,27 @@ def test_performance_10kb_payload_budget() -> None:
     # Warmup with realistic text to initialize regex DFA and spaCy buffers
     sanitize(task="Warmup", context=large_context[:1000])
 
-    durations = []
-    for _ in range(2):
+    durations: list[float] = []
+    # 30+ warm repetitions for robust statistical measurement
+    for _ in range(30):
         start = time.perf_counter()
         result = sanitize(task="Performance benchmark", context=large_context)
         durations.append((time.perf_counter() - start) * 1000.0)
 
-    duration_ms = min(durations)
+    durations.sort()
+    mean_ms = sum(durations) / len(durations)
+    median_ms = statistics.median(durations)
+    p95_idx = min(int(len(durations) * 0.95), len(durations) - 1)
+    p95_ms = durations[p95_idx]
+    max_ms = max(durations)
+
     assert "AKIAIOSFODNN7EXAMPLE" not in result.sanitized_text
     assert "ops-support@platform.net" not in result.sanitized_text
-    assert duration_ms < 1000.0, (
-        f"Processing 10KB payload took {duration_ms:.2f}ms (budget: 1000ms)"
+
+    # Assert warm P95 meets declared Phase 1 budget (< 500ms)
+    assert p95_ms < 500.0, (
+        f"10KB payload warm P95 was {p95_ms:.2f}ms (mean={mean_ms:.2f}ms, "
+        f"median={median_ms:.2f}ms, max={max_ms:.2f}ms; budget: 500ms)"
     )
 
 

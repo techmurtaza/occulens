@@ -9,6 +9,7 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
+from types import MappingProxyType
 
 
 class EntityType(StrEnum):
@@ -128,6 +129,11 @@ class SafeExternalPayload:
     action_counts: Mapping[str, int]
     blocked_count: int
     processing_ms: float
+
+    def __post_init__(self) -> None:
+        """Freeze dictionary mappings into immutable MappingProxyType."""
+        object.__setattr__(self, "token_map", MappingProxyType(dict(self.token_map)))
+        object.__setattr__(self, "action_counts", MappingProxyType(dict(self.action_counts)))
 
 
 @dataclass(frozen=True, slots=True)

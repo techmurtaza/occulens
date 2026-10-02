@@ -6,6 +6,7 @@ Enforces strict policy precedence:
 
 from __future__ import annotations
 
+import re
 from collections.abc import Sequence
 
 from occulens.domain.models import DetectedEntity, EntityType, PrivacyAction, PrivacyDecision
@@ -48,8 +49,24 @@ def decide(
     assigned_aliases: dict[tuple[EntityType, str], str] = {}
     decisions: list[PrivacyDecision] = []
 
+    # Detect any locations explicitly named in the task prompt (P06)
+    task_lower = task.lower()
+    all_locations = [
+        e.value.lower()
+        for e in entities
+        if e.entity_type == EntityType.LOCATION and e.value and len(e.value) >= 2
+    ]
+    explicit_task_locations = [
+        loc for loc in all_locations if re.search(rf"\b{re.escape(loc)}\b", task_lower)
+    ]
+
     for entity in entities:
-        action, reason = _determine_action_and_reason(entity=entity, task=task, policy=policy)
+        action, reason = _determine_action_and_reason(
+            entity=entity,
+            task=task,
+            policy=policy,
+            explicit_task_locations=explicit_task_locations,
+        )
         replacement = _determine_replacement(
             entity=entity,
             action=action,
@@ -73,6 +90,7 @@ def _determine_action_and_reason(
     entity: DetectedEntity,
     task: str,
     policy: Policy | None,
+    explicit_task_locations: Sequence[str] = (),
 ) -> tuple[PrivacyAction, str]:
     """Determine the PrivacyAction and explanation reason based on strict precedence."""
     # 1. Hard Security Rule (Non-overridable invariant)
@@ -94,7 +112,16 @@ def _determine_action_and_reason(
     task_match = match_task_rule(entity.entity_type, task)
     if task_match is not None:
         action, reason = task_match
-        return action, reason
+        # If task explicitly names locations, only those named are ALLOWed (P06)
+        if (
+            action == PrivacyAction.ALLOW
+            and entity.entity_type == EntityType.LOCATION
+            and explicit_task_locations
+            and entity.value.lower() not in explicit_task_locations
+        ):
+            pass  # Fall through to default rule
+        else:
+            return action, reason
 
     # 4. Deterministic Default Rule
     if entity.entity_type in _DEFAULT_ACTIONS:

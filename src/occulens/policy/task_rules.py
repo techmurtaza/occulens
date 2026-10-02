@@ -15,6 +15,16 @@ from dataclasses import dataclass
 
 from occulens.domain.models import EntityType, PrivacyAction
 
+_NEGATIVE_INTENT_RE = re.compile(
+    r"\b(remove|delete|strip|drop|clear|purge|suppress|clean)\b", re.IGNORECASE
+)
+_CODE_METAPHOR_RE = re.compile(
+    r"\b(dependencies|dependency|data structure|linked list|codebase|architecture|"
+    r"pipeline|schema)\b",
+    re.IGNORECASE,
+)
+_LINKED_LIST_RE = re.compile(r"\blinked list\b", re.IGNORECASE)
+
 
 @dataclass(frozen=True, slots=True)
 class TaskAwareRule:
@@ -37,6 +47,19 @@ class TaskAwareRule:
         if not task:
             return False
         task_lower = task.lower()
+
+        # Negative intent exclusion (e.g. "remove all links" should never ALLOW links)
+        if self.action == PrivacyAction.ALLOW and _NEGATIVE_INTENT_RE.search(task_lower):
+            return False
+
+        # Technical metaphor exclusion for location ("map dependencies", "linked list")
+        if self.entity_type == EntityType.LOCATION and _CODE_METAPHOR_RE.search(task_lower):
+            return False
+
+        # "linked list" should not activate URL navigation
+        if self.entity_type == EntityType.URL and _LINKED_LIST_RE.search(task_lower):
+            return False
+
         for kw in self.keywords:
             pattern = rf"\b{re.escape(kw.lower())}\b"
             if re.search(pattern, task_lower):

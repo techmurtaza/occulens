@@ -61,10 +61,12 @@ select = [
 "src/occulens/detectors/secret_detector.py" = [
     "S105",  # Detector defines regex patterns matching secret keywords
 ]
-"tests/*" = [
+"tests/**" = [
     "S101",  # assert allowed in tests
     "S105",  # hardcoded password strings in test cases
     "S106",  # hardcoded password strings in test cases
+    "S311",  # pseudo-random generator allowed for test fixture generation
+    "S603",  # subprocess in test fixture
 ]
 
 [tool.ruff.format]
@@ -77,8 +79,13 @@ warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
 
+[tool.pyright]
+include = ["src", "tests"]
+extraPaths = ["."]
+
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]
 addopts = "-v --strict-markers --tb=short"
 
 [tool.commitizen]

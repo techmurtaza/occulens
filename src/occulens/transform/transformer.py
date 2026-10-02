@@ -9,7 +9,7 @@ from __future__ import annotations
 
 from collections.abc import Sequence
 
-from occulens.domain.models import PrivacyAction, PrivacyDecision
+from occulens.domain.models import DetectedEntity, PrivacyAction, PrivacyDecision
 
 # Precedence for resolving conflicting overlapping decisions:
 # Harder safety boundaries always outrank softer actions.
@@ -70,9 +70,10 @@ def _filter_non_overlapping_decisions(
         ValueError: If any entity offset exceeds text boundaries.
     """
     for d in decisions:
-        if d.entity.end > text_len:
+        if d.entity.start < 0 or d.entity.end > text_len or d.entity.start >= d.entity.end:
             raise ValueError(
-                f"Entity end offset ({d.entity.end}) exceeds text length ({text_len})"
+                f"Invalid entity span [{d.entity.start}, {d.entity.end}) "
+                f"exceeds text length {text_len}"
             )
 
     # Sort candidates by action severity descending, confidence descending,
@@ -91,13 +92,47 @@ def _filter_non_overlapping_decisions(
     selected: list[PrivacyDecision] = []
 
     for cand in sorted_by_priority:
-        # Two half-open intervals [a, b) and [c, d) overlap if max(a, c) < min(b, d)
-        overlaps = any(
-            max(cand.entity.start, s.entity.start) < min(cand.entity.end, s.entity.end)
-            for s in selected
-        )
-        if not overlaps:
+        # Check overlaps with currently selected decisions
+        overlapping_indices = [
+            i
+            for i, s in enumerate(selected)
+            if max(cand.entity.start, s.entity.start) < min(cand.entity.end, s.entity.end)
+        ]
+        if not overlapping_indices:
             selected.append(cand)
+        else:
+            # If cand is a disallowed action, merge into overlapping disallowed decisions
+            # so the entire union span is protected without leaking partial characters (O02)
+            if cand.action != PrivacyAction.ALLOW:
+                for idx in overlapping_indices:
+                    prev = selected[idx]
+                    if prev.action != PrivacyAction.ALLOW:
+                        new_start = min(prev.entity.start, cand.entity.start)
+                        new_end = max(prev.entity.end, cand.entity.end)
+                        higher_action = (
+                            prev.action
+                            if _ACTION_SEVERITY[prev.action] >= _ACTION_SEVERITY[cand.action]
+                            else cand.action
+                        )
+                        higher_reason = (
+                            prev.reason
+                            if _ACTION_SEVERITY[prev.action] >= _ACTION_SEVERITY[cand.action]
+                            else cand.reason
+                        )
+                        merged_entity = DetectedEntity(
+                            entity_type=prev.entity.entity_type,
+                            start=new_start,
+                            end=new_end,
+                            confidence=max(prev.entity.confidence, cand.entity.confidence),
+                            source=prev.entity.source,
+                            value="",
+                        )
+                        selected[idx] = PrivacyDecision(
+                            entity=merged_entity,
+                            action=higher_action,
+                            replacement=prev.replacement or cand.replacement,
+                            reason=f"merged overlapping spans: {higher_reason}",
+                        )
 
     # Return selected decisions ordered in reverse of starting position (right to left)
     return sorted(selected, key=lambda d: d.entity.start, reverse=True)

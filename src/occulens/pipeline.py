@@ -32,16 +32,59 @@ def _merge_detector_entities(
     """Merge detected secrets and PII entities, prioritizing secrets on collision.
 
     Hard security boundary rule: if any PII detection overlaps with a detected
-    secret, the secret takes strict precedence and the PII detection is discarded.
+    secret (e.g. secret credentials inside a URL), the secret takes strict precedence
+    and expands to protect the entire union of the overlapping spans (O01).
     """
-    merged: list[DetectedEntity] = list(secrets)
+    merged_secrets: list[DetectedEntity] = []
 
+    for sec in secrets:
+        cur_start, cur_end = sec.start, sec.end
+        for pii in pii_entities:
+            if pii.entity_type == EntityType.URL and max(cur_start, pii.start) < min(
+                cur_end, pii.end
+            ):
+                cur_start = min(cur_start, pii.start)
+                cur_end = max(cur_end, pii.end)
+        if cur_start != sec.start or cur_end != sec.end:
+            merged_secrets.append(
+                DetectedEntity(
+                    entity_type=EntityType.SECRET,
+                    start=cur_start,
+                    end=cur_end,
+                    confidence=1.0,
+                    source=sec.source,
+                    value="",
+                )
+            )
+        else:
+            merged_secrets.append(sec)
+
+    # Consolidate any overlapping secret spans
+    merged_secrets = sorted(merged_secrets, key=lambda s: (s.start, s.end))
+    consolidated_secrets: list[DetectedEntity] = []
+    for sec in merged_secrets:
+        if consolidated_secrets and sec.start <= consolidated_secrets[-1].end:
+            last = consolidated_secrets[-1]
+            consolidated_secrets[-1] = DetectedEntity(
+                entity_type=EntityType.SECRET,
+                start=last.start,
+                end=max(last.end, sec.end),
+                confidence=1.0,
+                source=last.source,
+                value="",
+            )
+        else:
+            consolidated_secrets.append(sec)
+
+    non_overlapping_pii: list[DetectedEntity] = []
     for pii in pii_entities:
-        overlaps_secret = any(max(pii.start, sec.start) < min(pii.end, sec.end) for sec in secrets)
-        if not overlaps_secret:
-            merged.append(pii)
+        overlaps = any(
+            max(pii.start, sec.start) < min(pii.end, sec.end) for sec in consolidated_secrets
+        )
+        if not overlaps:
+            non_overlapping_pii.append(pii)
 
-    return sorted(merged, key=lambda e: (e.start, e.end))
+    return sorted(consolidated_secrets + non_overlapping_pii, key=lambda e: (e.start, e.end))
 
 
 DEFAULT_MAX_INPUT_LENGTH: int = 100_000
@@ -114,12 +157,20 @@ def sanitize(
 
         # 3. Merge entities, prioritizing secrets on collision
         entities = _merge_detector_entities(secrets, pii_entities)
-    except Exception:
-        # Hard security invariant: fail closed if detection crashes unexpectedly.
-        # Raw context must NEVER cross boundary when inspection fails.
+
+        # 4. Privacy policy decision engine
+        decisions = decide(entities=entities, task=task, policy=policy)
+
+        # 5. Deterministic transformer
+        sanitized_text = transform(text=context, decisions=decisions)
+    except Exception as err:
+        # Hard security invariant: fail closed if any pipeline stage crashes unexpectedly.
+        # Raw context must NEVER cross boundary when inspection, policy, or transformation fails.
+        # Log exception type only to prevent canary/credential leakage from exception messages.
+        error_type = type(err).__name__
         _logger.warning(
-            "Detection failed unexpectedly; invoking fail-closed fallback to [LOCAL_ONLY]",
-            exc_info=True,
+            "Pipeline encountered unexpected %s; invoking fail-closed fallback to [LOCAL_ONLY]",
+            error_type,
         )
         fallback_entity = DetectedEntity(
             entity_type=EntityType.SECRET,
@@ -127,13 +178,13 @@ def sanitize(
             end=len(context),
             confidence=1.0,
             source="fail_closed_guard",
-            value="[REDACTED_DUE_TO_DETECTION_ERROR]",
+            value="[REDACTED_DUE_TO_PIPELINE_ERROR]",
         )
         fallback_decision = PrivacyDecision(
             entity=fallback_entity,
             action=PrivacyAction.LOCAL_ONLY,
             replacement="[LOCAL_ONLY]",
-            reason="detection failure fallback (fail-closed)",
+            reason="pipeline failure fallback (fail-closed)",
         )
         elapsed_ms = round((time.perf_counter() - start_time) * 1000.0, 3)
         return SanitizeResult(
@@ -144,12 +195,6 @@ def sanitize(
             local_only_count=1,
             processing_ms=elapsed_ms,
         )
-
-    # 4. Privacy policy decision engine
-    decisions = decide(entities=entities, task=task, policy=policy)
-
-    # 5. Deterministic transformer
-    sanitized_text = transform(text=context, decisions=decisions)
 
     # 6. Metrics & diagnostics
     local_only_count = sum(1 for d in decisions if d.action == PrivacyAction.LOCAL_ONLY)
