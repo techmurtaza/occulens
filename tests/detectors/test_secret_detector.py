@@ -75,15 +75,17 @@ def test_detect_private_key() -> None:
 
 
 def test_detect_database_connection_uris() -> None:
-    """Detects database URIs containing embedded passwords and credentials."""
+    """Detects database and network service URIs containing embedded passwords and credentials."""
     pg_uri = "postgresql://app_user:mockSecretPass123@db.internal.net:5432/production"
     mongo_uri = "mongodb+srv://admin:clusterMockPass99@cluster0.example.com/analytics"
-    text = f"Connect to:\n{pg_uri}\nor fallback:\n{mongo_uri}"
+    http_uri = "https://admin:UltraPass999!@internal-api.cluster.local:8443/status"
+    text = f"Connect to:\n{pg_uri}\nor fallback:\n{mongo_uri}\nor status:\n{http_uri}"
 
     entities = detect_secrets(text)
-    assert len(entities) == 2
+    assert len(entities) == 3
     assert entities[0].value == pg_uri
     assert entities[1].value == mongo_uri
+    assert entities[2].value == http_uri
 
 
 def test_detect_bearer_token() -> None:

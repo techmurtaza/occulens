@@ -1,4 +1,4 @@
-.PHONY: install lint format format-check typecheck test check pre-commit clean
+.PHONY: install lint format format-check typecheck test evaluate check pre-commit clean
 
 VENV ?= .venv
 PYTHON ?= $(VENV)/bin/python
@@ -25,6 +25,9 @@ typecheck:
 
 test:
 	$(PYTEST)
+
+evaluate:
+	$(PYTHON) -m occulens.evaluation
 
 check: lint format-check typecheck test
 

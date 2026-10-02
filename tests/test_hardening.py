@@ -150,8 +150,8 @@ def test_performance_10kb_payload_budget() -> None:
         "Operator Sarah Connor acknowledged ticket INC-8821. "
         "Contact on-call at ops-support@platform.net or +1 415 555 0199. "
     )
-    # ~218 chars per block; repeat 50 times for ~11KB
-    large_context = (base_paragraph * 50) + "Final key: AKIAIOSFODNN7EXAMPLE."
+    # ~218 chars per block; repeat 46 times for ~10KB (10,060 chars)
+    large_context = (base_paragraph * 46) + "Final key: AKIAIOSFODNN7EXAMPLE."
     assert len(large_context) >= 10_000
 
     # Warmup

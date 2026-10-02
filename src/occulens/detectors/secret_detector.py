@@ -29,9 +29,9 @@ _PRIVATE_KEY_RE = re.compile(
     r"-----BEGIN (?:[A-Z0-9 ]+)?PRIVATE KEY-----[\s\S]*?-----END (?:[A-Z0-9 ]+)?PRIVATE KEY-----"
 )
 
-# 5. Database connection URIs containing username:password credentials
+# 5. Database and network service connection URIs containing username:password credentials
 _DATABASE_URI_RE = re.compile(
-    r"\b(?:postgres(?:ql)?|mysql|mariadb|mongodb(?:\+srv)?|redis|mssql|cockroachdb)"
+    r"\b(?:https?|ftp|postgres(?:ql)?|mysql|mariadb|mongodb(?:\+srv)?|redis|mssql|cockroachdb|amqp(?:s)?)"
     r":\/\/[^\s:@\/]+:[^\s@\/]+@[^\s\/]+(?::\d+)?\/?[^\s\"'<>]*"
 )
 

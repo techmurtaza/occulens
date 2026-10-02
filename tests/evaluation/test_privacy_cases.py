@@ -1,11 +1,12 @@
 """Comprehensive privacy evaluation test suite.
 
-Verifies end-to-end sanitization behavior across 52 privacy test cases:
+Verifies end-to-end sanitization behavior across 100+ privacy test cases:
 1. Zero secret leakage across all cases.
 2. DROP behavior for email/phone/urls.
 3. TOKENIZE behavior for persons and organizations with consistent aliases.
 4. ABSTRACT behavior for locations.
-5. Mixed entities, boundaries, multi-line, and repeated entities.
+5. Task-aware rules (ALLOW for task-relevant locations and URLs).
+6. Professional, SWE, HR/legal, customer support, memory, and adversarial scenarios.
 """
 
 from __future__ import annotations
@@ -62,7 +63,7 @@ def test_privacy_case_leakage_and_expectations(case: dict[str, Any]) -> None:
 
 
 def test_zero_secret_leaks_across_suite() -> None:
-    """Evaluate all 52 cases and assert that total secret leaks is strictly 0."""
+    """Evaluate all 100+ cases and assert that total secret leaks is strictly 0."""
     secret_leaks = 0
     leaked_details: list[str] = []
 
@@ -77,8 +78,8 @@ def test_zero_secret_leaks_across_suite() -> None:
 
 
 def test_suite_case_count_target() -> None:
-    """Ensure suite contains at least 50 test cases as required for Checkpoint B."""
-    assert len(ALL_CASES) >= 50
+    """Ensure suite contains at least 100 test cases as required for Checkpoint C."""
+    assert len(ALL_CASES) >= 100
 
 
 def test_warm_pipeline_latency_budget() -> None:
