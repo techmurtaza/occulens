@@ -162,12 +162,17 @@ print(result.sanitized_text)
 
 ## Evaluation & Phase 1 Results
 
-Occulens evaluates against a comprehensive suite of **110 test cases** across 7 operational domains (secrets, professional communication, software engineering, HR/legal, customer support, conversational memory, and adversarial attacks).
+The supplied `occulens-v0.1.0-report.json` records **114/114 evaluation cases passed**:
 
-- **Secret Leakage Rate:** strictly **0.0%** (0 leaks)
-- **PII Leakage Rate:** strictly **0.0%** (0 leaks)
-- **Benchmark Pass Rate:** **100% (110 / 110 cases)**
-- **Warm Latency:** ~18.4 ms (P95: 6.9 ms)
+- **Recorded secret leaks:** 0
+- **Recorded PII leaks:** 0
+- **Cases with diagnostic leaks:** 0
+- **Required information retained:** 38/38 applicable cases; 0 incorrect removals
+- **Measured latency:** average 19.61 ms; P95 12.45 ms
+
+These results apply to this evaluation run, not every possible input. The first case took about 1.49 seconds and is included in the average; these are not warm-only latency figures.
+
+See [v0.1.0 release notes](RELEASE_NOTES.md) for setup, release results, and alpha limitations.
 
 Detailed metrics, distributions, and architecture decisions are documented in:
 - [Phase 1 Results & Metrics Baseline](docs/phase1-results.md)
@@ -194,8 +199,8 @@ All developer workflows are accessible via `make`:
 | `make format` | Automatically format code with Ruff | Clean formatting |
 | `make format-check` | Verify formatting compliance without modifying files | 0 diffs |
 | `make typecheck` | Run mypy strict type checking on `src/` | 0 type errors |
-| `make test` | Run full pytest test suite | 226/226 passing |
-| `make evaluate` | Run privacy evaluation benchmark across 110 test cases | 100% pass, 0 leaks |
+| `make test` | Run full pytest test suite | All tests pass |
+| `make evaluate` | Run the privacy evaluation benchmark (114 cases) | 100% pass, 0 leaks |
 | `make check` | Run full pre-merge quality gate (`lint` + `format-check` + `typecheck` + `test`) | All gates green |
 
 ---
