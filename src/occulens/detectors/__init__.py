@@ -5,6 +5,7 @@ in raw input context, including credentials, secrets, and PII.
 
 Public API:
     - detect_secrets: Scans text for credentials, keys, and tokens using deterministic regex.
+    - detect_pii: Scans text for PII and named entities using Presidio and spaCy NER.
 
 Explicit Non-Responsibilities:
     - Does NOT decide policy or assign privacy actions (handled by policy/ module).
@@ -12,6 +13,7 @@ Explicit Non-Responsibilities:
     - Does NOT manage session state or storage (ephemeral per call).
 """
 
+from occulens.detectors.pii_detector import detect_pii
 from occulens.detectors.secret_detector import detect_secrets
 
-__all__ = ["detect_secrets"]
+__all__ = ["detect_pii", "detect_secrets"]

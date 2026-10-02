@@ -19,7 +19,10 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Topic :: Security",
 ]
-dependencies = []
+dependencies = [
+    "presidio-analyzer>=2.2.0",
+    "spacy>=3.7.0",
+]
 
 [project.optional-dependencies]
 dev = [
