@@ -29,6 +29,21 @@ Transformer (Deterministic text sanitization)
 Sanitized Context
 ```
 
+### Privacy Actions & Core Invariants
+
+Occulens operates on five deterministic privacy actions:
+- `ALLOW`: Keep value intact (only when justified by task intent, e.g. location for navigation).
+- `DROP`: Remove value from context (`[REMOVED]`).
+- `TOKENIZE`: Replace with session-scoped consistent alias (`PERSON_A`).
+- `ABSTRACT`: Generalize to category descriptor (`a city`, `an organization`).
+- `LOCAL_ONLY`: Hard boundary quarantine (`[LOCAL_ONLY]`).
+
+**Hard Security Invariants:**
+1. **Strict Secret Quarantine:** API keys, credentials, passwords, private keys, bearer tokens, and auth headers strictly resolve to `LOCAL_ONLY`.
+2. **Precedence:** Hard security rules outrank any policy configuration, task-aware heuristic, or model suggestion.
+3. **Zero Raw Leaks in Diagnostics:** Raw values are never preserved in diagnostics, logs, telemetry, or error chains ([ADR-006](docs/decisions/ADR-006-no-raw-values-in-diagnostics.md), [ADR-007](docs/decisions/ADR-007-hardening-boundary-seal.md)).
+4. **Fail-Closed Default:** Any unexpected exception or ambiguous high-risk classification defaults safely to `LOCAL_ONLY`.
+
 ---
 
 ## Project Structure
@@ -175,6 +190,7 @@ These results apply to this evaluation run, not every possible input. The first 
 See [v0.1.0 release notes](RELEASE_NOTES.md) for setup, release results, and alpha limitations.
 
 Detailed metrics, distributions, and architecture decisions are documented in:
+- [Technical Documentation & Architecture Invariants](docs/README.md)
 - [Phase 1 Results & Metrics Baseline](docs/phase1-results.md)
 - [Architecture Decision Records (ADRs)](docs/decisions/)
 
