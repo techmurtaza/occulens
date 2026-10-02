@@ -9,6 +9,7 @@ from occulens.domain import (
     EntityType,
     PrivacyAction,
     PrivacyDecision,
+    SafeExternalPayload,
     SanitizeResult,
 )
 
@@ -219,3 +220,155 @@ def test_sanitize_result_raw_secret_redaction_invariant() -> None:
     # 4. Result is frozen
     with pytest.raises(FrozenInstanceError):
         result.blocked_count = 0  # type: ignore[misc]
+
+
+def test_sanitize_result_redaction_for_all_non_allow_actions() -> None:
+    """SanitizeResult must redact raw values for TOKENIZE, ABSTRACT, DROP, and LOCAL_ONLY."""
+    ent_tokenize = DetectedEntity(
+        entity_type=EntityType.PERSON,
+        start=0,
+        end=12,
+        confidence=0.95,
+        source="ner",
+        value="John F. Doe",
+    )
+    dec_tokenize = PrivacyDecision(
+        entity=ent_tokenize,
+        action=PrivacyAction.TOKENIZE,
+        replacement="PERSON_A",
+        reason="default tokenize person",
+    )
+
+    ent_abstract = DetectedEntity(
+        entity_type=EntityType.LOCATION,
+        start=20,
+        end=25,
+        confidence=0.9,
+        source="ner",
+        value="Paris",
+    )
+    dec_abstract = PrivacyDecision(
+        entity=ent_abstract,
+        action=PrivacyAction.ABSTRACT,
+        replacement="[LOCATION]",
+        reason="abstract location",
+    )
+
+    ent_drop = DetectedEntity(
+        entity_type=EntityType.URL,
+        start=30,
+        end=50,
+        confidence=0.99,
+        source="regex",
+        value="http://internal.site",
+    )
+    dec_drop = PrivacyDecision(
+        entity=ent_drop,
+        action=PrivacyAction.DROP,
+        replacement="",
+        reason="drop url",
+    )
+
+    ent_allow = DetectedEntity(
+        entity_type=EntityType.LOCATION,
+        start=60,
+        end=66,
+        confidence=0.85,
+        source="ner",
+        value="London",
+    )
+    dec_allow = PrivacyDecision(
+        entity=ent_allow,
+        action=PrivacyAction.ALLOW,
+        replacement=None,
+        reason="task requires location",
+    )
+
+    result = SanitizeResult(
+        sanitized_text="PERSON_A in [LOCATION]. London",
+        entities=[ent_tokenize, ent_abstract, ent_drop, ent_allow],
+        decisions=[dec_tokenize, dec_abstract, dec_drop, dec_allow],
+        blocked_count=0,
+        local_only_count=0,
+        processing_ms=1.5,
+    )
+
+    # 1. Non-ALLOW entities must be redacted in both entities and decisions
+    assert result.entities[0].value == "[REDACTED]"
+    assert result.decisions[0].entity.value == "[REDACTED]"
+
+    assert result.entities[1].value == "[REDACTED]"
+    assert result.decisions[1].entity.value == "[REDACTED]"
+
+    assert result.entities[2].value == "[REDACTED]"
+    assert result.decisions[2].entity.value == "[REDACTED]"
+
+    # 2. ALLOW entity retains original value
+    assert result.entities[3].value == "London"
+    assert result.decisions[3].entity.value == "London"
+
+    # 3. repr(result) contains NO raw values of redacted entities
+    repr_str = repr(result)
+    assert "John F. Doe" not in repr_str
+    assert "Paris" not in repr_str
+    assert "http://internal.site" not in repr_str
+    assert "London" in repr_str
+
+
+def test_safe_external_payload_dto_and_generation() -> None:
+    """Verifies SafeExternalPayload contains only transmission-safe fields and is frozen."""
+    ent_person = DetectedEntity(
+        entity_type=EntityType.PERSON,
+        start=0,
+        end=5,
+        confidence=0.9,
+        source="ner",
+        value="Alice",
+    )
+    dec_person = PrivacyDecision(
+        entity=ent_person,
+        action=PrivacyAction.TOKENIZE,
+        replacement="PERSON_A",
+        reason="tokenize person",
+    )
+
+    ent_secret = DetectedEntity(
+        entity_type=EntityType.SECRET,
+        start=10,
+        end=30,
+        confidence=1.0,
+        source="secret_detector",
+        value="my_secret_token_1234",
+    )
+    dec_secret = PrivacyDecision(
+        entity=ent_secret,
+        action=PrivacyAction.LOCAL_ONLY,
+        replacement="[LOCAL_ONLY]",
+        reason="block secret",
+    )
+
+    result = SanitizeResult(
+        sanitized_text="PERSON_A [LOCAL_ONLY]",
+        entities=[ent_person, ent_secret],
+        decisions=[dec_person, dec_secret],
+        blocked_count=1,
+        local_only_count=1,
+        processing_ms=2.5,
+    )
+
+    payload = result.to_safe_payload()
+    assert isinstance(payload, SafeExternalPayload)
+    assert payload.sanitized_text == "PERSON_A [LOCAL_ONLY]"
+    assert payload.token_map == {"PERSON_A": "PERSON"}
+    assert payload.action_counts == {"TOKENIZE": 1, "LOCAL_ONLY": 1}
+    assert payload.blocked_count == 1
+    assert payload.processing_ms == 2.5
+
+    # Safe payload repr contains zero raw sensitive values
+    repr_payload = repr(payload)
+    assert "Alice" not in repr_payload
+    assert "my_secret_token_1234" not in repr_payload
+
+    # Payload is frozen
+    with pytest.raises(FrozenInstanceError):
+        payload.blocked_count = 0  # type: ignore[misc]

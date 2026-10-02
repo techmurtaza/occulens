@@ -13,12 +13,13 @@ Verifies:
 
 from __future__ import annotations
 
+import logging
 import time
 from unittest.mock import patch
 
 import pytest
 
-from occulens import DEFAULT_MAX_INPUT_LENGTH, sanitize
+from occulens import DEFAULT_MAX_INPUT_LENGTH, SafeExternalPayload, sanitize
 
 
 def test_reject_none_inputs() -> None:
@@ -124,11 +125,14 @@ def test_case_insensitive_bearer_token() -> None:
     assert result.local_only_count == 2
 
 
-def test_fail_closed_on_unexpected_detector_crash() -> None:
-    """Ensure pipeline fails closed (returns [LOCAL_ONLY]) if a detector raises an exception."""
-    with patch(
-        "occulens.pipeline.detect_secrets",
-        side_effect=RuntimeError("Simulated catastrophic regex failure"),
+def test_fail_closed_on_unexpected_detector_crash(caplog: pytest.LogCaptureFixture) -> None:
+    """Ensure pipeline fails closed and logs a warning with exc_info without leaking context."""
+    with (
+        caplog.at_level(logging.WARNING, logger="occulens.pipeline"),
+        patch(
+            "occulens.pipeline.detect_secrets",
+            side_effect=RuntimeError("Simulated catastrophic regex failure"),
+        ),
     ):
         sensitive_input = "Alice connected with password = 'CriticalSecret123!'."
         result = sanitize(task="Triage error", context=sensitive_input)
@@ -139,6 +143,15 @@ def test_fail_closed_on_unexpected_detector_crash() -> None:
         assert result.sanitized_text == "[LOCAL_ONLY]"
         assert result.local_only_count == 1
         assert result.blocked_count == 1
+
+        # Observability: warning log with exc_info, strictly no raw context
+        assert len(caplog.records) >= 1
+        log_record = caplog.records[-1]
+        assert log_record.levelname == "WARNING"
+        assert "fail-closed fallback" in log_record.message
+        assert sensitive_input not in log_record.message
+        assert "CriticalSecret123!" not in caplog.text
+        assert "Simulated catastrophic regex failure" in caplog.text
 
 
 def test_performance_10kb_payload_budget() -> None:
@@ -194,3 +207,58 @@ def test_sanitize_conversational_basic_and_token_not_blocked() -> None:
     assert result.sanitized_text == text
     assert result.local_only_count == 0
     assert result.blocked_count == 0
+
+
+def test_tokenize_repr_contains_no_raw_pii() -> None:
+    """Ensure repr(result) contains zero raw PII values for tokenized entities (Checkpoint B)."""
+    raw_name = "Jonathan Higgins"
+    raw_email = "jhiggins@estate.org"
+    context = f"Contact agent {raw_name} at {raw_email} regarding the incident."
+    result = sanitize(task="Summarize report", context=context)
+
+    # Values must be transformed in sanitized text
+    assert raw_name not in result.sanitized_text
+    assert raw_email not in result.sanitized_text
+    assert "PERSON_A" in result.sanitized_text
+    assert "[REMOVED]" in result.sanitized_text
+
+    # Diagnostic repr MUST NOT expose raw PII
+    repr_str = repr(result)
+    assert raw_name not in repr_str
+    assert raw_email not in repr_str
+
+    for entity in result.entities:
+        assert entity.value == "[REDACTED]"
+    for decision in result.decisions:
+        assert decision.entity.value == "[REDACTED]"
+
+
+def test_result_to_safe_payload_contains_no_raw_values() -> None:
+    """Ensure to_safe_payload() produces a transmission-safe DTO with zero raw values."""
+    raw_secret = "ghp_TestMockToken1234567890abcdefghijkl"
+    raw_name = "Dr. Beverly Crusher"
+    context = f"Physician {raw_name} authorized token {raw_secret}."
+    result = sanitize(task="Process patient records", context=context)
+
+    payload = result.to_safe_payload()
+    assert isinstance(payload, SafeExternalPayload)
+
+    # Sanitized text is present and safe
+    assert raw_secret not in payload.sanitized_text
+    assert raw_name not in payload.sanitized_text
+    assert "[LOCAL_ONLY]" in payload.sanitized_text
+    assert "PERSON_A" in payload.sanitized_text
+
+    # token_map maps replacement token -> entity type name
+    assert payload.token_map == {"PERSON_A": "PERSON"}
+
+    # action_counts has counts
+    assert payload.action_counts["TOKENIZE"] == 1
+    assert payload.action_counts["LOCAL_ONLY"] == 1
+    assert payload.blocked_count == 1
+    assert payload.processing_ms > 0.0
+
+    # repr has no raw secrets or PII
+    payload_repr = repr(payload)
+    assert raw_secret not in payload_repr
+    assert raw_name not in payload_repr

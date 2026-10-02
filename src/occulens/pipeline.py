@@ -7,6 +7,7 @@ Coordinates the end-to-end execution:
 
 from __future__ import annotations
 
+import logging
 import time
 from collections.abc import Sequence
 
@@ -20,6 +21,8 @@ from occulens.domain.models import (
 )
 from occulens.policy import Policy, decide
 from occulens.transform import transform
+
+_logger = logging.getLogger("occulens.pipeline")
 
 
 def _merge_detector_entities(
@@ -114,6 +117,10 @@ def sanitize(
     except Exception:
         # Hard security invariant: fail closed if detection crashes unexpectedly.
         # Raw context must NEVER cross boundary when inspection fails.
+        _logger.warning(
+            "Detection failed unexpectedly; invoking fail-closed fallback to [LOCAL_ONLY]",
+            exc_info=True,
+        )
         fallback_entity = DetectedEntity(
             entity_type=EntityType.SECRET,
             start=0,

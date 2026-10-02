@@ -114,4 +114,5 @@ def test_root_package_exports() -> None:
     assert hasattr(occulens, "PrivacyAction")
     assert hasattr(occulens, "DetectedEntity")
     assert hasattr(occulens, "PrivacyDecision")
+    assert hasattr(occulens, "SafeExternalPayload")
     assert callable(occulens.sanitize)

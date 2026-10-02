@@ -10,6 +10,7 @@ Public API:
     - DetectedEntity: Immutable span representation of an entity identified in text.
     - PrivacyDecision: Immutable policy decision mapping an entity to an action.
     - SanitizeResult: Immutable result container with redacted diagnostic metadata.
+    - SafeExternalPayload: Transmission-safe payload guaranteed free of raw sensitive data.
 
 Explicit Non-Responsibilities:
     - Does NOT perform regex matching or NLP (handled by detectors/ module).
@@ -44,6 +45,7 @@ from occulens.domain.models import (
     EntityType,
     PrivacyAction,
     PrivacyDecision,
+    SafeExternalPayload,
     SanitizeResult,
 )
 
@@ -52,5 +54,6 @@ __all__ = [
     "EntityType",
     "PrivacyAction",
     "PrivacyDecision",
+    "SafeExternalPayload",
     "SanitizeResult",
 ]

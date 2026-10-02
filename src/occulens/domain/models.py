@@ -6,7 +6,7 @@ vocabulary for the privacy sanitization pipeline.
 
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
 
@@ -110,18 +110,39 @@ class PrivacyDecision:
 
 
 @dataclass(frozen=True, slots=True)
+class SafeExternalPayload:
+    """Transmission-safe payload for external consumption.
+
+    Guaranteed to contain zero raw PII, credentials, or secrets.
+
+    Attributes:
+        sanitized_text: Context string with sensitive data transformed.
+        token_map: Mapping of anonymized replacement tokens to their entity type.
+        action_counts: Distribution of privacy actions executed.
+        blocked_count: Total count of blocked entities.
+        processing_ms: Pipeline processing duration in milliseconds.
+    """
+
+    sanitized_text: str
+    token_map: Mapping[str, str]
+    action_counts: Mapping[str, int]
+    blocked_count: int
+    processing_ms: float
+
+
+@dataclass(frozen=True, slots=True)
 class SanitizeResult:
     """Result of running context through the privacy pipeline.
 
-    Invariant (AD-6 / AGENTS.md):
+    Invariant (AD-H1 / AGENTS.md):
         Raw secrets and disallowed private data must never cross the trusted
-        boundary. Any LOCAL_ONLY or DROP entity retained in the diagnostics
-        tuple is strictly stored with its raw value redacted.
+        boundary. In diagnostics (entities and decisions), any entity whose
+        action is not ALLOW has its raw value strictly redacted to [REDACTED].
 
     Attributes:
         sanitized_text: Safe output context with sensitive data transformed.
-        entities: Diagnosed entities (with LOCAL_ONLY/DROP raw values redacted).
-        decisions: Decisions applied (with LOCAL_ONLY/DROP raw values redacted).
+        entities: Diagnosed entities (with non-ALLOW raw values redacted).
+        decisions: Decisions applied (with non-ALLOW raw values redacted).
         blocked_count: Total count of blocked entities (LOCAL_ONLY).
         local_only_count: Total count of LOCAL_ONLY decisions.
         processing_ms: Time taken to process in milliseconds.
@@ -153,23 +174,17 @@ class SanitizeResult:
         }
 
         for dec in decisions:
-            if (
-                dec.action in (PrivacyAction.LOCAL_ONLY, PrivacyAction.DROP)
-                or dec.entity.entity_type == EntityType.SECRET
-            ):
-                redacted_decisions.append(dec.with_redacted_entity())
-            else:
+            if dec.action == PrivacyAction.ALLOW and dec.entity.entity_type != EntityType.SECRET:
                 redacted_decisions.append(dec)
+            else:
+                redacted_decisions.append(dec.with_redacted_entity())
 
         for ent in entities:
             action = decision_map.get((ent.entity_type, ent.start, ent.end))
-            if (
-                action in (PrivacyAction.LOCAL_ONLY, PrivacyAction.DROP)
-                or ent.entity_type == EntityType.SECRET
-            ):
-                redacted_entities.append(ent.with_redacted_value())
-            else:
+            if action == PrivacyAction.ALLOW and ent.entity_type != EntityType.SECRET:
                 redacted_entities.append(ent)
+            else:
+                redacted_entities.append(ent.with_redacted_value())
 
         object.__setattr__(self, "sanitized_text", sanitized_text)
         object.__setattr__(self, "entities", tuple(redacted_entities))
@@ -177,3 +192,27 @@ class SanitizeResult:
         object.__setattr__(self, "blocked_count", blocked_count)
         object.__setattr__(self, "local_only_count", local_only_count)
         object.__setattr__(self, "processing_ms", processing_ms)
+
+    def to_safe_payload(self) -> SafeExternalPayload:
+        """Export a transmission-safe DTO containing zero raw sensitive values.
+
+        Returns:
+            A SafeExternalPayload containing sanitized text, token alias mappings,
+            action counts, blocked count, and processing duration.
+        """
+        token_map: dict[str, str] = {}
+        action_counts: dict[str, int] = {}
+
+        for dec in self.decisions:
+            action_name = dec.action.value
+            action_counts[action_name] = action_counts.get(action_name, 0) + 1
+            if dec.action == PrivacyAction.TOKENIZE and dec.replacement:
+                token_map[dec.replacement] = dec.entity.entity_type.value
+
+        return SafeExternalPayload(
+            sanitized_text=self.sanitized_text,
+            token_map=token_map,
+            action_counts=action_counts,
+            blocked_count=self.blocked_count,
+            processing_ms=self.processing_ms,
+        )

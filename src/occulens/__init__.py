@@ -8,6 +8,7 @@ Public API:
     - sanitize: Primary entry point to sanitize raw context before external transmission.
     - Policy: Configuration model for overriding default actions and abstractions.
     - SanitizeResult: Immutable result container carrying sanitized text and redacted diagnostics.
+    - SafeExternalPayload: Transmission-safe payload guaranteed free of raw sensitive data.
     - EntityType: Enumeration of recognized sensitive entity categories.
     - PrivacyAction: Enumeration of permitted privacy transformations
       (ALLOW, DROP, TOKENIZE, ABSTRACT, LOCAL_ONLY).
@@ -41,6 +42,7 @@ from occulens.domain.models import (
     EntityType,
     PrivacyAction,
     PrivacyDecision,
+    SafeExternalPayload,
     SanitizeResult,
 )
 from occulens.pipeline import DEFAULT_MAX_INPUT_LENGTH, sanitize
@@ -55,6 +57,7 @@ __all__ = [
     "Policy",
     "PrivacyAction",
     "PrivacyDecision",
+    "SafeExternalPayload",
     "SanitizeResult",
     "__version__",
     "sanitize",
