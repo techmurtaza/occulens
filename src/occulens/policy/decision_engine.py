@@ -16,6 +16,7 @@ from occulens.policy.rules import (
     Policy,
     index_to_letters,
 )
+from occulens.policy.task_rules import match_task_rule
 
 
 def decide(
@@ -28,12 +29,13 @@ def decide(
     Precedence chain:
     1. Hard security rules: EntityType.SECRET is unconditionally LOCAL_ONLY.
     2. Explicit policy overrides: custom actions configured on the Policy object.
-    3. Deterministic default rules: standard baseline actions per EntityType.
-    4. Conservative fallback: any unmapped entity type defaults to TOKENIZE.
+    3. Task-aware deterministic rules: contextually relevant entities allowed per task intent.
+    4. Deterministic default rules: standard baseline actions per EntityType.
+    5. Conservative fallback: any unmapped entity type defaults to TOKENIZE.
 
     Args:
         entities: Sequence of entities detected in the source context.
-        task: Optional description of the task being performed (reserved for task-aware rules).
+        task: Description of the task being performed (triggers task-aware rules).
         policy: Optional configuration policy overriding default actions/abstractions.
 
     Returns:
@@ -47,7 +49,7 @@ def decide(
     decisions: list[PrivacyDecision] = []
 
     for entity in entities:
-        action, reason = _determine_action_and_reason(entity, policy)
+        action, reason = _determine_action_and_reason(entity=entity, task=task, policy=policy)
         replacement = _determine_replacement(
             entity=entity,
             action=action,
@@ -69,9 +71,10 @@ def decide(
 
 def _determine_action_and_reason(
     entity: DetectedEntity,
+    task: str,
     policy: Policy | None,
 ) -> tuple[PrivacyAction, str]:
-    """Determine the PrivacyAction and explanation reason based on precedence."""
+    """Determine the PrivacyAction and explanation reason based on strict precedence."""
     # 1. Hard Security Rule (Non-overridable invariant)
     if entity.entity_type == EntityType.SECRET:
         return (
@@ -87,7 +90,13 @@ def _determine_action_and_reason(
             f"explicit policy override for {entity.entity_type.value}",
         )
 
-    # 3. Deterministic Default Rule
+    # 3. Task-Aware Deterministic Rule (heuristic based on task intent)
+    task_match = match_task_rule(entity.entity_type, task)
+    if task_match is not None:
+        action, reason = task_match
+        return action, reason
+
+    # 4. Deterministic Default Rule
     if entity.entity_type in _DEFAULT_ACTIONS:
         default_action = _DEFAULT_ACTIONS[entity.entity_type]
         return (
@@ -95,7 +104,7 @@ def _determine_action_and_reason(
             f"deterministic default rule for {entity.entity_type.value}",
         )
 
-    # 4. Conservative Fallback
+    # 5. Conservative Fallback
     return (
         PrivacyAction.TOKENIZE,
         f"conservative fallback rule for unmapped entity type {entity.entity_type.value}",

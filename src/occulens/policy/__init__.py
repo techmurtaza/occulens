@@ -15,5 +15,6 @@ Explicit Non-Responsibilities:
 
 from occulens.policy.decision_engine import decide
 from occulens.policy.rules import Policy
+from occulens.policy.task_rules import TaskAwareRule, match_task_rule
 
-__all__ = ["Policy", "decide"]
+__all__ = ["Policy", "TaskAwareRule", "decide", "match_task_rule"]
