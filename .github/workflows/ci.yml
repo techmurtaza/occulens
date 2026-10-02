@@ -1,0 +1,65 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  quality:
+    name: Quality checks (Python 3.12)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - name: Check out source
+        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+
+      - name: Set up Python
+        uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: '3.12'
+          cache: pip
+          cache-dependency-path: pyproject.toml
+
+      - name: Install dependencies and language model
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install --upgrade pip
+          make install
+          .venv/bin/python -m spacy download en_core_web_md
+
+      - name: Lint
+        run: make lint
+
+      - name: Check formatting
+        run: make format-check
+
+      - name: Check types
+        run: make typecheck
+
+      - name: Run tests
+        run: .venv/bin/python -m pytest --junitxml=ci-results/pytest.xml
+
+      - name: Run privacy evaluation
+        run: .venv/bin/python -m occulens.evaluation --output ci-results/privacy-report.json
+
+      - name: Upload test and evaluation reports
+        if: always()
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6
+        with:
+          name: quality-reports
+          path: ci-results/
+          if-no-files-found: warn
+          retention-days: 14
