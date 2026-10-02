@@ -35,8 +35,15 @@ _DATABASE_URI_RE = re.compile(
     r":\/\/[^\s:@\/]+:[^\s@\/]+@[^\s\/]+(?::\d+)?\/?[^\s\"'<>]*"
 )
 
-# 6. Authorization Bearer Tokens (case-insensitive for BEARER / Bearer / bearer)
-_BEARER_TOKEN_RE = re.compile(r"\bBearer\s+([A-Za-z0-9\-._~+/]+=*)\b", re.IGNORECASE)
+# 6. Authorization Headers (Bearer, Basic, Token - case-insensitive)
+# Bearer tokens may appear standalone ("Bearer <token>") or prefixed.
+# Basic and Token auth schemes strictly require an explicit "Authorization" / "Auth"
+# header prefix to prevent false positives on conversational English phrases.
+_AUTH_HEADER_RE = re.compile(
+    r"""(?:["']?(?:authorization|auth)["']?\s*:\s*["']?)?(?:Bearer)\s+["']?([A-Za-z0-9\-._~+/]+=*)["']?"""
+    r"""|["']?(?:authorization|auth)["']?\s*:\s*["']?(?:Basic|Token)\s+["']?([A-Za-z0-9\-._~+/]+=*)["']?""",
+    re.IGNORECASE,
+)
 
 # 7. Generic credential assignments (password, api_key, secret_key, client_secret)
 # Supports raw identifiers (password = ...) and JSON/YAML quoted keys ("password": ...)
@@ -47,7 +54,7 @@ _SECRET_KEYWORD_PATTERN = (
 )
 _ASSIGNED_SECRET_RE = re.compile(
     rf"""(?:(?P<quote>["']?)(?P<key>{_SECRET_KEYWORD_PATTERN})(?P=quote))\s*[:=]\s*"""
-    r"""(?:"(?P<quoted_val>[^"\r\n\t]{4,})"|'(?P<single_val>[^'\r\n\t]{4,})'|(?P<raw_val>[A-Za-z0-9_\-\/+=!@#$%^&*]{8,}))""",
+    r"""(?:"(?P<quoted_val>[^"\r\n\t]{4,})"|'(?P<single_val>[^'\r\n\t]{4,})'|(?P<raw_val>[A-Za-z0-9_\-\/+=!@#$%^&*]{4,}))""",
     re.IGNORECASE,
 )
 
@@ -81,11 +88,16 @@ def _extract_assigned_secrets(text: str) -> list[tuple[int, int]]:
     return spans
 
 
-def _extract_bearer_tokens(text: str) -> list[tuple[int, int]]:
-    """Extract token spans from Authorization Bearer headers."""
+def _extract_auth_tokens(text: str) -> list[tuple[int, int]]:
+    """Extract token spans from Authorization headers (Bearer, Basic, Token)."""
     spans: list[tuple[int, int]] = []
-    for match in _BEARER_TOKEN_RE.finditer(text):
-        spans.append((match.start(1), match.end(1)))
+    for match in _AUTH_HEADER_RE.finditer(text):
+        start = match.start(1) if match.group(1) is not None else match.start(2)
+        end = match.end(1) if match.group(1) is not None else match.end(2)
+        while end > start and text[end - 1] in ".,;:!?\"'":
+            end -= 1
+        if end > start:
+            spans.append((start, end))
     return spans
 
 
@@ -146,8 +158,8 @@ def detect_secrets(text: str) -> list[DetectedEntity]:
     for match in _DATABASE_URI_RE.finditer(text):
         candidate_spans.append(match.span())
 
-    # 6. Bearer Tokens
-    candidate_spans.extend(_extract_bearer_tokens(text))
+    # 6. Authorization Headers (Bearer, Basic, Token)
+    candidate_spans.extend(_extract_auth_tokens(text))
 
     # 7. Explicit secret variable assignments
     candidate_spans.extend(_extract_assigned_secrets(text))

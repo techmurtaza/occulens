@@ -164,3 +164,33 @@ def test_performance_10kb_payload_budget() -> None:
     assert "AKIAIOSFODNN7EXAMPLE" not in result.sanitized_text
     assert "ops-support@platform.net" not in result.sanitized_text
     assert duration_ms < 500.0, f"Processing 10KB payload took {duration_ms:.2f}ms (budget: 500ms)"
+
+
+def test_sanitize_short_passwords_and_auth_headers() -> None:
+    """Ensure short unquoted passwords and auth headers are sanitized to [LOCAL_ONLY]."""
+    text = (
+        "Server config:\n"
+        "password = abc123\n"
+        "Authorization: Basic dXNlcjpwYXNzd29yZA==\n"
+        "Authorization: Token ghp_abc123def456\n"
+    )
+    result = sanitize(task="Audit server config", context=text)
+
+    # Invariant: raw secrets must never cross the boundary
+    assert "abc123" not in result.sanitized_text
+    assert "dXNlcjpwYXNzd29yZA==" not in result.sanitized_text
+    assert "ghp_abc123def456" not in result.sanitized_text
+    assert result.local_only_count == 3
+    assert result.blocked_count == 3
+    assert "Authorization: Basic [LOCAL_ONLY]" in result.sanitized_text
+    assert "Authorization: Token [LOCAL_ONLY]" in result.sanitized_text
+    assert "password = [LOCAL_ONLY]" in result.sanitized_text
+
+
+def test_sanitize_conversational_basic_and_token_not_blocked() -> None:
+    """Ensure conversational phrases with 'Basic' and 'Token' are not falsely blocked."""
+    text = "Basic arithmetic is taught in grade school. The token ring network is historical."
+    result = sanitize(task="Grammar review", context=text)
+    assert result.sanitized_text == text
+    assert result.local_only_count == 0
+    assert result.blocked_count == 0

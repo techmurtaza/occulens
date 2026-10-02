@@ -176,3 +176,84 @@ def test_multiple_mixed_secrets_with_overlapping_spans() -> None:
     # Verify all substrings match exact text slicing
     for entity in entities:
         assert text[entity.start : entity.end] == entity.value
+
+
+def test_detect_short_unquoted_passwords() -> None:
+    """Detects short unquoted passwords (down to 4 chars) assigned to secret keys."""
+    # 6-char unquoted password
+    text1 = "password = abc123"
+    entities1 = detect_secrets(text1)
+    assert len(entities1) == 1
+    assert entities1[0].entity_type == EntityType.SECRET
+    assert entities1[0].value == "abc123"
+
+    # 4-char unquoted password
+    text2 = "pwd = pass"
+    entities2 = detect_secrets(text2)
+    assert len(entities2) == 1
+    assert entities2[0].entity_type == EntityType.SECRET
+    assert entities2[0].value == "pass"
+
+    # 5-char unquoted password with symbol
+    text3 = "passwd: P@ss1"
+    entities3 = detect_secrets(text3)
+    assert len(entities3) == 1
+    assert entities3[0].entity_type == EntityType.SECRET
+    assert entities3[0].value == "P@ss1"
+
+
+def test_detect_authorization_headers_basic_and_token() -> None:
+    """Detects credentials in Authorization: Basic and Authorization: Token headers."""
+    # Basic auth with base64 padding
+    text1 = "Authorization: Basic dXNlcjpwYXNzd29yZA=="
+    entities1 = detect_secrets(text1)
+    assert len(entities1) == 1
+    assert entities1[0].entity_type == EntityType.SECRET
+    assert entities1[0].value == "dXNlcjpwYXNzd29yZA=="
+
+    # Token auth (GitHub / API token format)
+    text2 = "Authorization: Token ghp_abc123def456"
+    entities2 = detect_secrets(text2)
+    assert len(entities2) == 1
+    assert entities2[0].entity_type == EntityType.SECRET
+    assert entities2[0].value == "ghp_abc123def456"
+
+    # Case-insensitive header and scheme
+    text3 = "authorization: basic dXNlcjpwYXNzd29yZA=="
+    entities3 = detect_secrets(text3)
+    assert len(entities3) == 1
+    assert entities3[0].entity_type == EntityType.SECRET
+    assert entities3[0].value == "dXNlcjpwYXNzd29yZA=="
+
+    # Auth: Token prefix format
+    text4 = "Auth: Token secret_custom_token_999"
+    entities4 = detect_secrets(text4)
+    assert len(entities4) == 1
+    assert entities4[0].entity_type == EntityType.SECRET
+    assert entities4[0].value == "secret_custom_token_999"
+
+    # JSON formatted header with quotes
+    text5 = '{"Authorization": "Basic dXNlcjpwYXNzd29yZA=="}'
+    entities5 = detect_secrets(text5)
+    assert len(entities5) == 1
+    assert entities5[0].entity_type == EntityType.SECRET
+    assert entities5[0].value == "dXNlcjpwYXNzd29yZA=="
+
+
+def test_false_positive_suppression_auth_and_passwords() -> None:
+    """Ensure short passwords, booleans, and conversational words are not flagged."""
+    # Under 4 chars (< 4 chars)
+    text_short = "password = abc and pwd = 12"
+    assert len(detect_secrets(text_short)) == 0
+
+    # Conversational phrases containing 'Basic' or 'Token' without auth headers
+    text_words = (
+        "Basic arithmetic is fundamental to engineering. "
+        "The token ring network protocol is obsolete. "
+        "Please bring your security token to the desk."
+    )
+    assert len(detect_secrets(text_words)) == 0
+
+    # Extended null / boolean exclusions
+    text_booleans = "password = none\npwd = undefined\npasswd = NULL"
+    assert len(detect_secrets(text_booleans)) == 0
