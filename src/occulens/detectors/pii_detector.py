@@ -173,14 +173,16 @@ def detect_pii(text: str) -> list[DetectedEntity]:
     if not text or not text.strip():
         return []
 
-    analyzer, spacy_nlp = _get_analyzer_and_nlp()
+    analyzer, _ = _get_analyzer_and_nlp()
     candidates: list[DetectedEntity] = []
 
-    # 1. Presidio recognition (structured PII + integrated NER)
+    # 1. Single-pass NLP processing shared between Presidio and spaCy NER
+    nlp_artifacts = analyzer.nlp_engine.process_text(text, language="en")
     presidio_results: list[RecognizerResult] = analyzer.analyze(
         text=text,
         language="en",
         score_threshold=0.4,
+        nlp_artifacts=nlp_artifacts,
     )
 
     for res in presidio_results:
@@ -207,9 +209,8 @@ def detect_pii(text: str) -> list[DetectedEntity]:
             )
         )
 
-    # 2. Direct spaCy NER recognition (language entities & products)
-    doc = spacy_nlp(text)
-    for ent in doc.ents:
+    # 2. Extract language entities & products from the same parsed spaCy pass
+    for ent in nlp_artifacts.entities:
         entity_type = _SPACY_TO_DOMAIN_MAP.get(ent.label_)
         if entity_type is None:
             continue

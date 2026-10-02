@@ -21,12 +21,13 @@ from occulens.domain.models import (
     PrivacyDecision,
     SanitizeResult,
 )
-from occulens.pipeline import sanitize
+from occulens.pipeline import DEFAULT_MAX_INPUT_LENGTH, sanitize
 from occulens.policy.rules import Policy
 
 __version__ = "0.1.0"
 
 __all__ = [
+    "DEFAULT_MAX_INPUT_LENGTH",
     "DetectedEntity",
     "EntityType",
     "Policy",

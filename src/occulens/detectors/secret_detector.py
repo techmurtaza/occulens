@@ -35,18 +35,19 @@ _DATABASE_URI_RE = re.compile(
     r":\/\/[^\s:@\/]+:[^\s@\/]+@[^\s\/]+(?::\d+)?\/?[^\s\"'<>]*"
 )
 
-# 6. Authorization Bearer Tokens
-_BEARER_TOKEN_RE = re.compile(r"\bBearer\s+([A-Za-z0-9\-._~+/]+=*)\b")
+# 6. Authorization Bearer Tokens (case-insensitive for BEARER / Bearer / bearer)
+_BEARER_TOKEN_RE = re.compile(r"\bBearer\s+([A-Za-z0-9\-._~+/]+=*)\b", re.IGNORECASE)
 
 # 7. Generic credential assignments (password, api_key, secret_key, client_secret)
+# Supports raw identifiers (password = ...) and JSON/YAML quoted keys ("password": ...)
 _SECRET_KEYWORD_PATTERN = (
     r"(?:aws_secret_access_key|api[_-]?key|secret[_-]?key|auth[_-]?token|"
     r"access[_-]?token|private[_-]?key|password|passwd|pwd|client[_-]?secret|"
     r"x[_-]?api[_-]?key)"
 )
 _ASSIGNED_SECRET_RE = re.compile(
-    rf"\b(?P<key>{_SECRET_KEYWORD_PATTERN})\s*[:=]\s*"
-    r"(?:\"(?P<quoted_val>[^\"\r\n\t]{4,})\"|'(?P<single_val>[^'\r\n\t]{4,})'|(?P<raw_val>[A-Za-z0-9_\-\/+=]{8,}))",
+    rf"""(?:(?P<quote>["']?)(?P<key>{_SECRET_KEYWORD_PATTERN})(?P=quote))\s*[:=]\s*"""
+    r"""(?:"(?P<quoted_val>[^"\r\n\t]{4,})"|'(?P<single_val>[^'\r\n\t]{4,})'|(?P<raw_val>[A-Za-z0-9_\-\/+=!@#$%^&*]{8,}))""",
     re.IGNORECASE,
 )
 

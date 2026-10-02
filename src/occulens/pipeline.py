@@ -13,7 +13,9 @@ from collections.abc import Sequence
 from occulens.detectors import detect_pii, detect_secrets
 from occulens.domain.models import (
     DetectedEntity,
+    EntityType,
     PrivacyAction,
+    PrivacyDecision,
     SanitizeResult,
 )
 from occulens.policy import Policy, decide
@@ -39,35 +41,60 @@ def _merge_detector_entities(
     return sorted(merged, key=lambda e: (e.start, e.end))
 
 
+DEFAULT_MAX_INPUT_LENGTH: int = 100_000
+
+
 def sanitize(
     task: str,
     context: str,
     policy: Policy | None = None,
+    max_input_length: int = DEFAULT_MAX_INPUT_LENGTH,
 ) -> SanitizeResult:
     """Sanitize raw context before transmission to external AI agents or models.
 
     Executes the deterministic Phase 1 privacy pipeline:
-    1. Detects hard credentials and secrets (AWS keys, tokens, passwords, etc.).
-    2. Detects PII and named entities (persons, emails, phones, locations, orgs, URLs).
-    3. Merges entities, enforcing secret precedence on overlapping spans.
-    4. Evaluates privacy policy to assign actions (ALLOW, DROP, TOKENIZE, ABSTRACT, LOCAL_ONLY).
-    5. Transforms context by applying replacements in reverse offset order.
-    6. Returns a SanitizeResult with diagnostic redaction invariants guaranteed.
+    1. Validates inputs against type and size limits (default 100KB).
+    2. Detects hard credentials and secrets (AWS keys, tokens, passwords, etc.).
+    3. Detects PII and named entities (persons, emails, phones, locations, orgs, URLs).
+    4. Merges entities, enforcing secret precedence on overlapping spans.
+    5. Evaluates privacy policy to assign actions (ALLOW, DROP, TOKENIZE, ABSTRACT, LOCAL_ONLY).
+    6. Transforms context by applying replacements in reverse offset order.
+    7. Returns a SanitizeResult with diagnostic redaction invariants guaranteed.
+    8. Fails closed (replaces context with [LOCAL_ONLY]) if detector fails unexpectedly.
 
     Args:
         task: The task prompt or goal for which context is being prepared.
         context: Raw text context potentially containing secrets or sensitive PII.
         policy: Optional custom Policy overriding default actions or abstractions.
+        max_input_length: Maximum allowed context length in characters (default: 100,000).
 
     Returns:
         A SanitizeResult containing the sanitized text, diagnostics, and metrics.
+
+    Raises:
+        TypeError: If task or context is not a string.
+        ValueError: If context length exceeds max_input_length.
     """
     start_time = time.perf_counter()
 
-    if not context:
+    if task is None:
+        raise TypeError("task cannot be None; expected str")
+    if context is None:
+        raise TypeError("context cannot be None; expected str")
+    if not isinstance(task, str):
+        raise TypeError(f"task must be a string, got {type(task).__name__}")
+    if not isinstance(context, str):
+        raise TypeError(f"context must be a string, got {type(context).__name__}")
+
+    if len(context) > max_input_length:
+        raise ValueError(
+            f"context length ({len(context)}) exceeds maximum allowed limit ({max_input_length})"
+        )
+
+    if not context or not context.strip():
         elapsed_ms = round((time.perf_counter() - start_time) * 1000.0, 3)
         return SanitizeResult(
-            sanitized_text="",
+            sanitized_text=context,
             entities=(),
             decisions=(),
             blocked_count=0,
@@ -75,14 +102,41 @@ def sanitize(
             processing_ms=elapsed_ms,
         )
 
-    # 1. Deterministic secret detection
-    secrets = detect_secrets(context)
+    try:
+        # 1. Deterministic secret detection
+        secrets = detect_secrets(context)
 
-    # 2. PII / named entity detection
-    pii_entities = detect_pii(context)
+        # 2. PII / named entity detection
+        pii_entities = detect_pii(context)
 
-    # 3. Merge entities, prioritizing secrets on collision
-    entities = _merge_detector_entities(secrets, pii_entities)
+        # 3. Merge entities, prioritizing secrets on collision
+        entities = _merge_detector_entities(secrets, pii_entities)
+    except Exception:
+        # Hard security invariant: fail closed if detection crashes unexpectedly.
+        # Raw context must NEVER cross boundary when inspection fails.
+        fallback_entity = DetectedEntity(
+            entity_type=EntityType.SECRET,
+            start=0,
+            end=len(context),
+            confidence=1.0,
+            source="fail_closed_guard",
+            value="[REDACTED_DUE_TO_DETECTION_ERROR]",
+        )
+        fallback_decision = PrivacyDecision(
+            entity=fallback_entity,
+            action=PrivacyAction.LOCAL_ONLY,
+            replacement="[LOCAL_ONLY]",
+            reason="detection failure fallback (fail-closed)",
+        )
+        elapsed_ms = round((time.perf_counter() - start_time) * 1000.0, 3)
+        return SanitizeResult(
+            sanitized_text="[LOCAL_ONLY]",
+            entities=(fallback_entity,),
+            decisions=(fallback_decision,),
+            blocked_count=1,
+            local_only_count=1,
+            processing_ms=elapsed_ms,
+        )
 
     # 4. Privacy policy decision engine
     decisions = decide(entities=entities, task=task, policy=policy)
