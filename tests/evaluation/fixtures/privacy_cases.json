@@ -9,6 +9,13 @@
     ],
     "expected_substrings": [
       "[LOCAL_ONLY]"
+    ],
+    "forbidden_diagnostic_values": [
+      "AKIAIOSFODNN7EXAMPLE"
+    ],
+    "must_preserve": [
+      "storage bucket",
+      "synchronization"
     ]
   },
   {
@@ -21,6 +28,12 @@
     ],
     "expected_substrings": [
       "[LOCAL_ONLY]"
+    ],
+    "forbidden_diagnostic_values": [
+      "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
+    ],
+    "must_preserve": [
+      "Environment config"
     ]
   },
   {
@@ -33,6 +46,13 @@
     ],
     "expected_substrings": [
       "[LOCAL_ONLY]"
+    ],
+    "forbidden_diagnostic_values": [
+      "ghp_ABCDEFGHIJKLMNOPQRSTUVWXYZabcdef12"
+    ],
+    "must_preserve": [
+      "submodules",
+      "github"
     ]
   },
   {
@@ -45,6 +65,12 @@
     ],
     "expected_substrings": [
       "[LOCAL_ONLY]"
+    ],
+    "forbidden_diagnostic_values": [
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c"
+    ],
+    "must_preserve": [
+      "Session authorization payload"
     ]
   },
   {
@@ -58,6 +84,12 @@
     ],
     "expected_substrings": [
       "[LOCAL_ONLY]"
+    ],
+    "forbidden_diagnostic_values": [
+      "MIIEowIBAAKCAQEA0Y1EXAMPLEKEYDATAHERE"
+    ],
+    "must_preserve": [
+      "bastion"
     ]
   },
   {
@@ -71,6 +103,12 @@
     ],
     "expected_substrings": [
       "[LOCAL_ONLY]"
+    ],
+    "forbidden_diagnostic_values": [
+      "UltraSecurePass999!"
+    ],
+    "must_preserve": [
+      "Database connection string"
     ]
   },
   {
@@ -83,6 +121,12 @@
     ],
     "expected_substrings": [
       "[LOCAL_ONLY]"
+    ],
+    "forbidden_diagnostic_values": [
+      "sec_bearer_token_abc123xyz789_end"
+    ],
+    "must_preserve": [
+      "Incoming authorization header"
     ]
   },
   {
@@ -95,6 +139,13 @@
     ],
     "expected_substrings": [
       "[LOCAL_ONLY]"
+    ],
+    "forbidden_diagnostic_values": [
+      "MySuperHiddenPassword!"
+    ],
+    "must_preserve": [
+      "Local configuration",
+      "local dev"
     ]
   },
   {
@@ -107,6 +158,12 @@
     ],
     "expected_substrings": [
       "[LOCAL_ONLY]"
+    ],
+    "forbidden_diagnostic_values": [
+      "api_key_secret_value_123456789"
+    ],
+    "must_preserve": [
+      "Verify client request"
     ]
   },
   {
@@ -119,6 +176,13 @@
     ],
     "expected_substrings": [
       "[LOCAL_ONLY]"
+    ],
+    "forbidden_diagnostic_values": [
+      "github_pat_11AAAAAAA0123456789_abcdefghijklmnopqrstuvwxyz0123456789abcdefghijklmnopqrstuvwxyz"
+    ],
+    "must_preserve": [
+      "pipeline pulls packages",
+      "directly"
     ]
   },
   {
@@ -131,6 +195,13 @@
     ],
     "expected_substrings": [
       "[REMOVED]"
+    ],
+    "forbidden_diagnostic_values": [
+      "alice.smith@enterprise.com"
+    ],
+    "must_preserve": [
+      "incident report",
+      "immediately"
     ]
   },
   {
@@ -143,6 +214,13 @@
     ],
     "expected_substrings": [
       "[REMOVED]"
+    ],
+    "forbidden_diagnostic_values": [
+      "devops+prod-alerts@sub.infra.platform.io"
+    ],
+    "must_preserve": [
+      "Automated alert",
+      "triage"
     ]
   },
   {
@@ -155,6 +233,13 @@
     ],
     "expected_substrings": [
       "[REMOVED]"
+    ],
+    "forbidden_diagnostic_values": [
+      "555-432-1098"
+    ],
+    "must_preserve": [
+      "Emergency escalation",
+      "pager fails"
     ]
   },
   {
@@ -167,6 +252,9 @@
     ],
     "expected_substrings": [
       "[REMOVED]"
+    ],
+    "forbidden_diagnostic_values": [
+      "+44 20 7946 0192"
     ]
   },
   {
@@ -179,6 +267,13 @@
     ],
     "expected_substrings": [
       "[REMOVED]"
+    ],
+    "forbidden_diagnostic_values": [
+      "+1 (800) 555-0199"
+    ],
+    "must_preserve": [
+      "customer hotline",
+      "inquiries"
     ]
   },
   {
@@ -205,6 +300,13 @@
     ],
     "expected_substrings": [
       "PERSON_A"
+    ],
+    "forbidden_diagnostic_values": [
+      "Robert Oppenheimer"
+    ],
+    "must_preserve": [
+      "breakthrough",
+      "presentation"
     ]
   },
   {
@@ -219,6 +321,13 @@
     "expected_substrings": [
       "PERSON_A",
       "PERSON_B"
+    ],
+    "forbidden_diagnostic_values": [
+      "Alan Turing",
+      "Ada Lovelace"
+    ],
+    "must_preserve": [
+      "computing architecture"
     ]
   },
   {
@@ -283,6 +392,13 @@
     ],
     "expected_substrings": [
       "ORG_A"
+    ],
+    "forbidden_diagnostic_values": [
+      "Microsoft"
+    ],
+    "must_preserve": [
+      "application runs on",
+      "infrastructure and services"
     ]
   },
   {
@@ -297,6 +413,13 @@
     "expected_substrings": [
       "ORG_A",
       "ORG_B"
+    ],
+    "forbidden_diagnostic_values": [
+      "Acme Corp",
+      "Google"
+    ],
+    "must_preserve": [
+      "announced an enterprise collaboration with"
     ]
   },
   {
@@ -408,6 +531,10 @@
     ],
     "expected_substrings": [
       "[REMOVED]"
+    ],
+    "must_preserve": [
+      "Webhook endpoints are defined at",
+      "billing"
     ]
   },
   {
@@ -420,6 +547,10 @@
     ],
     "expected_substrings": [
       "[REMOVED]"
+    ],
+    "must_preserve": [
+      "Reference the onboarding guide at",
+      "today"
     ]
   },
   {
@@ -432,6 +563,9 @@
     ],
     "expected_substrings": [
       "[REMOVED]"
+    ],
+    "must_preserve": [
+      "Source code repository is hosted at"
     ]
   },
   {
@@ -444,6 +578,10 @@
     ],
     "expected_substrings": [
       "[REMOVED]"
+    ],
+    "must_preserve": [
+      "Monitor uptime metrics at",
+      "directly"
     ]
   },
   {
@@ -461,6 +599,14 @@
       "PERSON_A",
       "[REMOVED]",
       "a city"
+    ],
+    "forbidden_diagnostic_values": [
+      "John Doe",
+      "john@acme.com",
+      "555-123-4567"
+    ],
+    "must_preserve": [
+      "reported an outage"
     ]
   },
   {
@@ -478,6 +624,14 @@
       "PERSON_A",
       "a city",
       "[LOCAL_ONLY]"
+    ],
+    "forbidden_diagnostic_values": [
+      "Sarah Connor",
+      "AKIAIOSFODNN7EXAMPLE",
+      "pw123"
+    ],
+    "must_preserve": [
+      "deployed to"
     ]
   },
   {
@@ -496,6 +650,15 @@
       "ORG_A",
       "a city",
       "[REMOVED]"
+    ],
+    "forbidden_diagnostic_values": [
+      "David Miller",
+      "Acme Corp",
+      "david.miller@acme.com"
+    ],
+    "must_preserve": [
+      "Candidate",
+      "joined"
     ]
   },
   {
@@ -514,6 +677,14 @@
       "ORG_A",
       "a city",
       "[LOCAL_ONLY]"
+    ],
+    "forbidden_diagnostic_values": [
+      "Satya Nadella",
+      "Google",
+      "secret_val_xyz888"
+    ],
+    "must_preserve": [
+      "visited"
     ]
   },
   {
@@ -909,6 +1080,9 @@
     "expected_substrings": [
       "PERSON_A",
       "PERSON_B"
+    ],
+    "must_preserve": [
+      "annual salary adjustment"
     ]
   },
   {
@@ -923,6 +1097,9 @@
     "expected_substrings": [
       "PERSON_A",
       "a city"
+    ],
+    "must_preserve": [
+      "Senior Architect role"
     ]
   },
   {
@@ -1015,6 +1192,9 @@
     "expected_substrings": [
       "PERSON_A",
       "[REMOVED]"
+    ],
+    "must_preserve": [
+      "explanation for transaction charge"
     ]
   },
   {
@@ -1027,6 +1207,10 @@
     ],
     "expected_substrings": [
       "[REMOVED]"
+    ],
+    "must_preserve": [
+      "user account",
+      "temporary auth code"
     ]
   },
   {
@@ -1116,6 +1300,9 @@
     "expected_substrings": [
       "PERSON_A",
       "ORG_A"
+    ],
+    "must_preserve": [
+      "morning meetings"
     ]
   },
   {
@@ -1128,6 +1315,9 @@
     ],
     "expected_substrings": [
       "a city"
+    ],
+    "must_preserve": [
+      "upcoming vacation flight"
     ]
   },
   {
@@ -1219,6 +1409,9 @@
     "forbidden_leaked_values": [],
     "expected_substrings": [
       "Seattle"
+    ],
+    "must_preserve": [
+      "dinner options"
     ]
   },
   {
@@ -1241,6 +1434,10 @@
     "forbidden_leaked_values": [],
     "expected_substrings": [
       "Chicago"
+    ],
+    "must_preserve": [
+      "delivery van",
+      "sunrise"
     ]
   },
   {
@@ -1420,6 +1617,82 @@
     ],
     "expected_substrings": [
       "[LOCAL_ONLY]"
+    ]
+  },
+  {
+    "id": "sec-11",
+    "category": "secret",
+    "task": "Audit database configuration settings",
+    "context": "Primary application database password = abc123 configured in backend settings.",
+    "forbidden_leaked_values": [
+      "abc123"
+    ],
+    "forbidden_diagnostic_values": [
+      "abc123"
+    ],
+    "expected_substrings": [
+      "[LOCAL_ONLY]"
+    ],
+    "must_preserve": [
+      "Primary application database",
+      "backend settings"
+    ]
+  },
+  {
+    "id": "sec-12",
+    "category": "secret",
+    "task": "Verify proxy authentication header",
+    "context": "Proxy request sent with Authorization: Basic dXNlcjpwYXNzd29yZA== for upstream access.",
+    "forbidden_leaked_values": [
+      "dXNlcjpwYXNzd29yZA=="
+    ],
+    "forbidden_diagnostic_values": [
+      "dXNlcjpwYXNzd29yZA=="
+    ],
+    "expected_substrings": [
+      "[LOCAL_ONLY]"
+    ],
+    "must_preserve": [
+      "Proxy request",
+      "upstream access"
+    ]
+  },
+  {
+    "id": "sec-13",
+    "category": "secret",
+    "task": "Inspect webhook token authentication",
+    "context": "Outbound webhook dispatched with Authorization: Token ghp_abc123def456 for delivery.",
+    "forbidden_leaked_values": [
+      "ghp_abc123def456"
+    ],
+    "forbidden_diagnostic_values": [
+      "ghp_abc123def456"
+    ],
+    "expected_substrings": [
+      "[LOCAL_ONLY]"
+    ],
+    "must_preserve": [
+      "Outbound",
+      "for delivery"
+    ]
+  },
+  {
+    "id": "sec-14",
+    "category": "secret",
+    "task": "Review staging server credentials",
+    "context": "Staging server dev user passwd: P@ss1 configured for dev cluster.",
+    "forbidden_leaked_values": [
+      "P@ss1"
+    ],
+    "forbidden_diagnostic_values": [
+      "P@ss1"
+    ],
+    "expected_substrings": [
+      "[LOCAL_ONLY]"
+    ],
+    "must_preserve": [
+      "Staging server",
+      "dev cluster"
     ]
   }
 ]
