@@ -1,0 +1,1716 @@
+{
+  "total_cases": 110,
+  "passed": 110,
+  "failed": 0,
+  "probes": 0,
+  "secret_leaks": 0,
+  "pii_leaks": 0,
+  "entities_detected": 189,
+  "entities_by_type": {
+    "SECRET": 37,
+    "ORGANIZATION": 27,
+    "EMAIL": 18,
+    "PHONE": 11,
+    "LOCATION": 29,
+    "PERSON": 52,
+    "URL": 14,
+    "ACCOUNT_ID": 1
+  },
+  "actions_by_type": {
+    "LOCAL_ONLY": 37,
+    "TOKENIZE": 79,
+    "DROP": 42,
+    "ABSTRACT": 26,
+    "ALLOW": 5
+  },
+  "required_info_retained": 110,
+  "incorrect_removals": 0,
+  "avg_processing_ms": 18.38,
+  "p95_processing_ms": 6.92,
+  "case_results": [
+    {
+      "case_id": "sec-01",
+      "category": "secret",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 1491.684
+    },
+    {
+      "case_id": "sec-02",
+      "category": "secret",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 5.061
+    },
+    {
+      "case_id": "sec-03",
+      "category": "secret",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.407
+    },
+    {
+      "case_id": "sec-04",
+      "category": "secret",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.961
+    },
+    {
+      "case_id": "sec-05",
+      "category": "secret",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 6.363
+    },
+    {
+      "case_id": "sec-06",
+      "category": "secret",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 27.632
+    },
+    {
+      "case_id": "sec-07",
+      "category": "secret",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1,
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 2,
+      "processing_ms": 3.776
+    },
+    {
+      "case_id": "sec-08",
+      "category": "secret",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.727
+    },
+    {
+      "case_id": "sec-09",
+      "category": "secret",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 6.99
+    },
+    {
+      "case_id": "sec-10",
+      "category": "secret",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.805
+    },
+    {
+      "case_id": "drop-email-01",
+      "category": "email_phone",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "DROP": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 3.443
+    },
+    {
+      "case_id": "drop-email-02",
+      "category": "email_phone",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "DROP": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 3.357
+    },
+    {
+      "case_id": "drop-phone-01",
+      "category": "email_phone",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "DROP": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 9.233
+    },
+    {
+      "case_id": "drop-phone-02",
+      "category": "email_phone",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "ABSTRACT": 1,
+        "DROP": 1
+      },
+      "entities_count": 2,
+      "processing_ms": 5.542
+    },
+    {
+      "case_id": "drop-phone-03",
+      "category": "email_phone",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "DROP": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 6.127
+    },
+    {
+      "case_id": "drop-multi-comm-01",
+      "category": "email_phone",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "DROP": 3
+      },
+      "entities_count": 3,
+      "processing_ms": 6.383
+    },
+    {
+      "case_id": "tok-person-01",
+      "category": "person_org",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.099
+    },
+    {
+      "case_id": "tok-person-02",
+      "category": "person_org",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 2
+      },
+      "entities_count": 2,
+      "processing_ms": 3.745
+    },
+    {
+      "case_id": "tok-person-03",
+      "category": "person_org",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 3.995
+    },
+    {
+      "case_id": "tok-person-04",
+      "category": "person_org",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.469
+    },
+    {
+      "case_id": "tok-person-05",
+      "category": "person_org",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 3
+      },
+      "entities_count": 3,
+      "processing_ms": 5.503
+    },
+    {
+      "case_id": "tok-person-06",
+      "category": "person_org",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.708
+    },
+    {
+      "case_id": "tok-org-01",
+      "category": "person_org",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.822
+    },
+    {
+      "case_id": "tok-org-02",
+      "category": "person_org",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 2
+      },
+      "entities_count": 2,
+      "processing_ms": 3.858
+    },
+    {
+      "case_id": "tok-org-03",
+      "category": "person_org",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1,
+        "ABSTRACT": 1
+      },
+      "entities_count": 2,
+      "processing_ms": 4.264
+    },
+    {
+      "case_id": "tok-org-04",
+      "category": "person_org",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 3.837
+    },
+    {
+      "case_id": "tok-org-05",
+      "category": "person_org",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 3.941
+    },
+    {
+      "case_id": "abs-loc-01",
+      "category": "location",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "ABSTRACT": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 3.895
+    },
+    {
+      "case_id": "abs-loc-02",
+      "category": "location",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "ABSTRACT": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.339
+    },
+    {
+      "case_id": "abs-loc-03",
+      "category": "location",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "ABSTRACT": 2
+      },
+      "entities_count": 2,
+      "processing_ms": 4.225
+    },
+    {
+      "case_id": "abs-loc-04",
+      "category": "location",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "ABSTRACT": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.153
+    },
+    {
+      "case_id": "abs-loc-05",
+      "category": "location",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "ABSTRACT": 3
+      },
+      "entities_count": 3,
+      "processing_ms": 5.852
+    },
+    {
+      "case_id": "url-01",
+      "category": "url",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "DROP": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.328
+    },
+    {
+      "case_id": "url-02",
+      "category": "url",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "DROP": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 3.167
+    },
+    {
+      "case_id": "url-03",
+      "category": "url",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "DROP": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 3.825
+    },
+    {
+      "case_id": "url-04",
+      "category": "url",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "DROP": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 3.628
+    },
+    {
+      "case_id": "mix-01",
+      "category": "mixed",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1,
+        "DROP": 2,
+        "ABSTRACT": 1
+      },
+      "entities_count": 4,
+      "processing_ms": 6.313
+    },
+    {
+      "case_id": "mix-02",
+      "category": "mixed",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1,
+        "ABSTRACT": 1,
+        "LOCAL_ONLY": 2
+      },
+      "entities_count": 4,
+      "processing_ms": 5.832
+    },
+    {
+      "case_id": "mix-03",
+      "category": "mixed",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 2,
+        "ABSTRACT": 1,
+        "DROP": 1
+      },
+      "entities_count": 4,
+      "processing_ms": 5.005
+    },
+    {
+      "case_id": "mix-04",
+      "category": "mixed",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 2,
+        "ABSTRACT": 1,
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 4,
+      "processing_ms": 4.724
+    },
+    {
+      "case_id": "mix-05",
+      "category": "mixed",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1,
+        "DROP": 3
+      },
+      "entities_count": 4,
+      "processing_ms": 6.601
+    },
+    {
+      "case_id": "mix-06",
+      "category": "mixed",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "DROP": 2,
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 3,
+      "processing_ms": 5.061
+    },
+    {
+      "case_id": "bnd-01",
+      "category": "boundary",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 3.221
+    },
+    {
+      "case_id": "bnd-02",
+      "category": "boundary",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 3.057
+    },
+    {
+      "case_id": "bnd-03",
+      "category": "boundary",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 2.217
+    },
+    {
+      "case_id": "bnd-04",
+      "category": "boundary",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "DROP": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 3.448
+    },
+    {
+      "case_id": "rep-01",
+      "category": "repeated",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 3
+      },
+      "entities_count": 3,
+      "processing_ms": 5.786
+    },
+    {
+      "case_id": "rep-02",
+      "category": "repeated",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 2
+      },
+      "entities_count": 2,
+      "processing_ms": 4.648
+    },
+    {
+      "case_id": "rep-03",
+      "category": "repeated",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 5
+      },
+      "entities_count": 5,
+      "processing_ms": 5.368
+    },
+    {
+      "case_id": "ml-01",
+      "category": "multiline",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "DROP": 1,
+        "LOCAL_ONLY": 1,
+        "ABSTRACT": 1
+      },
+      "entities_count": 3,
+      "processing_ms": 5.934
+    },
+    {
+      "case_id": "ml-02",
+      "category": "multiline",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "DROP": 2,
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 3,
+      "processing_ms": 4.669
+    },
+    {
+      "case_id": "ml-03",
+      "category": "multiline",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 4,
+        "DROP": 2,
+        "ABSTRACT": 2
+      },
+      "entities_count": 8,
+      "processing_ms": 8.598
+    },
+    {
+      "case_id": "prof-01",
+      "category": "professional",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.812
+    },
+    {
+      "case_id": "prof-02",
+      "category": "professional",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 2
+      },
+      "entities_count": 2,
+      "processing_ms": 4.743
+    },
+    {
+      "case_id": "prof-03",
+      "category": "professional",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1,
+        "DROP": 1
+      },
+      "entities_count": 2,
+      "processing_ms": 6.918
+    },
+    {
+      "case_id": "prof-04",
+      "category": "professional",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1,
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 2,
+      "processing_ms": 5.406
+    },
+    {
+      "case_id": "prof-05",
+      "category": "professional",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1,
+        "DROP": 1
+      },
+      "entities_count": 2,
+      "processing_ms": 4.644
+    },
+    {
+      "case_id": "prof-06",
+      "category": "professional",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 3,
+        "ABSTRACT": 1
+      },
+      "entities_count": 4,
+      "processing_ms": 5.866
+    },
+    {
+      "case_id": "prof-07",
+      "category": "professional",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 2
+      },
+      "entities_count": 2,
+      "processing_ms": 4.517
+    },
+    {
+      "case_id": "prof-08",
+      "category": "professional",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "DROP": 1,
+        "TOKENIZE": 1
+      },
+      "entities_count": 2,
+      "processing_ms": 4.009
+    },
+    {
+      "case_id": "swe-01",
+      "category": "software_engineering",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1,
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 2,
+      "processing_ms": 3.458
+    },
+    {
+      "case_id": "swe-02",
+      "category": "software_engineering",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.49
+    },
+    {
+      "case_id": "swe-03",
+      "category": "software_engineering",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1,
+        "DROP": 1
+      },
+      "entities_count": 2,
+      "processing_ms": 6.718
+    },
+    {
+      "case_id": "swe-04",
+      "category": "software_engineering",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 6.052
+    },
+    {
+      "case_id": "swe-05",
+      "category": "software_engineering",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 5.392
+    },
+    {
+      "case_id": "swe-06",
+      "category": "software_engineering",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 1,
+        "DROP": 1
+      },
+      "entities_count": 2,
+      "processing_ms": 4.125
+    },
+    {
+      "case_id": "swe-07",
+      "category": "software_engineering",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1,
+        "LOCAL_ONLY": 1,
+        "DROP": 1
+      },
+      "entities_count": 3,
+      "processing_ms": 3.89
+    },
+    {
+      "case_id": "swe-08",
+      "category": "software_engineering",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 5.377
+    },
+    {
+      "case_id": "hr-01",
+      "category": "hr_legal",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 2
+      },
+      "entities_count": 2,
+      "processing_ms": 4.526
+    },
+    {
+      "case_id": "hr-02",
+      "category": "hr_legal",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1,
+        "ABSTRACT": 1
+      },
+      "entities_count": 2,
+      "processing_ms": 4.751
+    },
+    {
+      "case_id": "hr-03",
+      "category": "hr_legal",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 2
+      },
+      "entities_count": 2,
+      "processing_ms": 3.883
+    },
+    {
+      "case_id": "hr-04",
+      "category": "hr_legal",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.816
+    },
+    {
+      "case_id": "hr-05",
+      "category": "hr_legal",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 2
+      },
+      "entities_count": 2,
+      "processing_ms": 4.14
+    },
+    {
+      "case_id": "hr-06",
+      "category": "hr_legal",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "DROP": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.082
+    },
+    {
+      "case_id": "hr-07",
+      "category": "hr_legal",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 2
+      },
+      "entities_count": 2,
+      "processing_ms": 3.893
+    },
+    {
+      "case_id": "hr-08",
+      "category": "hr_legal",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.918
+    },
+    {
+      "case_id": "cs-01",
+      "category": "customer_support",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1,
+        "DROP": 1
+      },
+      "entities_count": 2,
+      "processing_ms": 5.549
+    },
+    {
+      "case_id": "cs-02",
+      "category": "customer_support",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1,
+        "DROP": 1
+      },
+      "entities_count": 2,
+      "processing_ms": 4.013
+    },
+    {
+      "case_id": "cs-03",
+      "category": "customer_support",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "ABSTRACT": 2
+      },
+      "entities_count": 2,
+      "processing_ms": 4.31
+    },
+    {
+      "case_id": "cs-04",
+      "category": "customer_support",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 2
+      },
+      "entities_count": 2,
+      "processing_ms": 3.889
+    },
+    {
+      "case_id": "cs-05",
+      "category": "customer_support",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.128
+    },
+    {
+      "case_id": "cs-06",
+      "category": "customer_support",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "DROP": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.699
+    },
+    {
+      "case_id": "cs-07",
+      "category": "customer_support",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.999
+    },
+    {
+      "case_id": "cs-08",
+      "category": "customer_support",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "DROP": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.544
+    },
+    {
+      "case_id": "mem-01",
+      "category": "agent_memory",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 2
+      },
+      "entities_count": 2,
+      "processing_ms": 5.092
+    },
+    {
+      "case_id": "mem-02",
+      "category": "agent_memory",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "ABSTRACT": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.161
+    },
+    {
+      "case_id": "mem-03",
+      "category": "agent_memory",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1,
+        "DROP": 1
+      },
+      "entities_count": 2,
+      "processing_ms": 4.873
+    },
+    {
+      "case_id": "mem-04",
+      "category": "agent_memory",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1,
+        "DROP": 1
+      },
+      "entities_count": 2,
+      "processing_ms": 4.889
+    },
+    {
+      "case_id": "mem-05",
+      "category": "agent_memory",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 2
+      },
+      "entities_count": 2,
+      "processing_ms": 4.385
+    },
+    {
+      "case_id": "mem-06",
+      "category": "agent_memory",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "ABSTRACT": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 5.056
+    },
+    {
+      "case_id": "mem-07",
+      "category": "agent_memory",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 2
+      },
+      "entities_count": 2,
+      "processing_ms": 4.515
+    },
+    {
+      "case_id": "mem-08",
+      "category": "agent_memory",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "TOKENIZE": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.267
+    },
+    {
+      "case_id": "ta-01",
+      "category": "task_aware",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "ALLOW": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 3.723
+    },
+    {
+      "case_id": "ta-02",
+      "category": "task_aware",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "ABSTRACT": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 3.528
+    },
+    {
+      "case_id": "ta-03",
+      "category": "task_aware",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "ALLOW": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 3.698
+    },
+    {
+      "case_id": "ta-04",
+      "category": "task_aware",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "ABSTRACT": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 3.584
+    },
+    {
+      "case_id": "ta-05",
+      "category": "task_aware",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "ALLOW": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 3.137
+    },
+    {
+      "case_id": "ta-06",
+      "category": "task_aware",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "DROP": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 2.937
+    },
+    {
+      "case_id": "ta-07",
+      "category": "task_aware",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "ALLOW": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.224
+    },
+    {
+      "case_id": "ta-08",
+      "category": "task_aware",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "ABSTRACT": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 3.545
+    },
+    {
+      "case_id": "ta-09",
+      "category": "task_aware",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "ALLOW": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.239
+    },
+    {
+      "case_id": "ta-10",
+      "category": "task_aware",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "DROP": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 3.495
+    },
+    {
+      "case_id": "adv-01",
+      "category": "adversarial",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 2
+      },
+      "entities_count": 2,
+      "processing_ms": 4.528
+    },
+    {
+      "case_id": "adv-02",
+      "category": "adversarial",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 2
+      },
+      "entities_count": 2,
+      "processing_ms": 5.68
+    },
+    {
+      "case_id": "adv-03",
+      "category": "adversarial",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 3.286
+    },
+    {
+      "case_id": "adv-04",
+      "category": "adversarial",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 2,
+        "DROP": 1
+      },
+      "entities_count": 3,
+      "processing_ms": 5.099
+    },
+    {
+      "case_id": "adv-05",
+      "category": "adversarial",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 5.266
+    },
+    {
+      "case_id": "adv-06",
+      "category": "adversarial",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 3.652
+    },
+    {
+      "case_id": "adv-07",
+      "category": "adversarial",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 5.102
+    },
+    {
+      "case_id": "adv-08",
+      "category": "adversarial",
+      "passed": true,
+      "is_probe": false,
+      "output_leaks": [],
+      "diagnostic_leaks": [],
+      "missing_preserved": [],
+      "missing_expected": [],
+      "actions": {
+        "LOCAL_ONLY": 1
+      },
+      "entities_count": 1,
+      "processing_ms": 4.369
+    }
+  ]
+}
